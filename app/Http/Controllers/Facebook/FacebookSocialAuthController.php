@@ -38,8 +38,7 @@ class FacebookSocialAuthController extends Controller
                     'pages_manage_metadata',
                     'email',
                     'business_management',
-                    'ads_management',
-                    'pages_read_user_content'
+                    'ads_management'
                 ])
                 ->redirectUrl(route('facebook.auth.callback'))
                 ->redirect();
@@ -105,11 +104,10 @@ class FacebookSocialAuthController extends Controller
                 ], [
                     'business_name' => $firstBusiness['name'] ?? 'Facebook Business',
                     'access_token' => $token,
-                    'user_id' => $currentUser->id,
-                    'contact_email' => $facebookUser->getEmail(),
-                    'status' => 'active',
+                    'app_id' => config('services.facebook.client_id'),
+                    'app_secret' => config('services.facebook.client_secret'),
+                    'status' => 'connected',
                     'token_expires_at' => now()->addDays(60), // Facebook tokens typically last 60 days
-                    'last_sync_at' => now()
                 ]);
             } else {
                 // If no business account, create one with user info
@@ -119,11 +117,10 @@ class FacebookSocialAuthController extends Controller
                 ], [
                     'business_name' => $facebookUser->getName() . "'s Business",
                     'access_token' => $token,
-                    'user_id' => $currentUser->id,
-                    'contact_email' => $facebookUser->getEmail(),
-                    'status' => 'active',
-                    'token_expires_at' => now()->addDays(60),
-                    'last_sync_at' => now()
+                    'app_id' => config('services.facebook.client_id'),
+                    'app_secret' => config('services.facebook.client_secret'),
+                    'status' => 'connected',
+                    'token_expires_at' => now()->addDays(60)
                 ]);
             }
 
@@ -133,12 +130,9 @@ class FacebookSocialAuthController extends Controller
                     'facebook_page_id' => $page['id'],
                     'facebook_business_account_id' => $businessAccount->id
                 ], [
-                    'name' => $page['name'],
-                    'access_token' => $page['access_token'],
-                    'category' => $page['category'] ?? 'Unknown',
-                    'verification_status' => $page['verification_status'] ?? 'unverified',
-                    'status' => 'active',
-                    'last_sync_at' => now()
+                    'page_name' => $page['name'],
+                    'page_access_token' => $page['access_token'],
+                    'is_active' => true
                 ]);
             }
 
