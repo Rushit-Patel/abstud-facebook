@@ -1,0 +1,1 @@
+<img class="default-logo" src="{{ $companyLogo }}" alt="{{ $companyName ?? 'Company Logo' }}" width="200"/>

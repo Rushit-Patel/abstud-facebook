@@ -1,0 +1,141 @@
+/* Student-specific layout styles */
+.student-layout {
+    --student-primary: #059669;
+    --student-secondary: #10b981;
+    --student-accent: #34d399;
+    --student-background: #f0fdf4;
+    --student-surface: #ffffff;
+    --student-text: #1f2937;
+    --student-text-muted: #6b7280;
+    --student-progress: #10b981;
+}
+
+/* Student progress card styles */
+.student-progress-card {
+    transition: all 0.2s ease-in-out;
+}
+
+.student-progress-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Student sidebar styles */
+.student-sidebar {
+    background: linear-gradient(180deg, var(--student-primary) 0%, var(--student-secondary) 100%);
+    width: 240px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Student header styles */
+.student-header {
+    background: var(--student-surface);
+    border-bottom: 1px solid #d1fae5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Student progress bar */
+.student-progress-bar {
+    background: var(--student-background);
+    padding: 1rem;
+    border-bottom: 1px solid #d1fae5;
+}
+
+/* Student course grid */
+.student-course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Student achievement badges */
+.student-achievement {
+    background: linear-gradient(135deg, var(--student-accent) 0%, var(--student-secondary) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Student assignment styles */
+.student-assignment {
+    background: var(--student-surface);
+    border: 1px solid #d1fae5;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.student-assignment:hover {
+    border-color: var(--student-secondary);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.student-assignment.completed {
+    background: #f0fdf4;
+    border-color: var(--student-primary);
+}
+
+.student-assignment.overdue {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+/* Student grade display */
+.student-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.student-grade.excellent {
+    background: #dcfce7;
+    color: var(--student-primary);
+}
+
+.student-grade.good {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.student-grade.needs-improvement {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Responsive design for student layout */
+@media (max-width: 768px) {
+    .student-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .student-course-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Student animation utilities */
+@keyframes studentProgressFill {
+    from {
+        width: 0%;
+    }
+    to {
+        width: var(--progress-width);
+    }
+}
+
+.student-progress-animated {
+    animation: studentProgressFill 1s ease-out;
+}

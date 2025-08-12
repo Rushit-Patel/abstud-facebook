@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "scripts": {
+        "watch": "echo 'Static assets are served directly from public/assets'"
+    },
+    "dependencies": {
+        "alpinejs": "^3.14.9"
+    }
+}

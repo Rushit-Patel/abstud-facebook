@@ -1,0 +1,174 @@
+/* Partner-specific layout styles */
+.partner-layout {
+    --partner-primary: #7c3aed;
+    --partner-secondary: #8b5cf6;
+    --partner-accent: #a78bfa;
+    --partner-background: #faf5ff;
+    --partner-surface: #ffffff;
+    --partner-text: #1f2937;
+    --partner-text-muted: #6b7280;
+    --partner-success: #059669;
+    --partner-warning: #d97706;
+    --partner-error: #dc2626;
+}
+
+/* Partner contract card styles */
+.partner-contract-card {
+    transition: all 0.2s ease-in-out;
+}
+
+.partner-contract-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Partner header styles */
+.partner-header {
+    background: linear-gradient(135deg, var(--partner-primary) 0%, var(--partner-secondary) 100%);
+    color: white;
+    padding: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Partner navigation styles */
+.partner-nav {
+    background: var(--partner-surface);
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.partner-nav-item {
+    color: var(--partner-text-muted);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border-bottom: 2px solid transparent;
+}
+
+.partner-nav-item:hover,
+.partner-nav-item.active {
+    color: var(--partner-primary);
+    border-bottom-color: var(--partner-primary);
+}
+
+/* Partner dashboard grid */
+.partner-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+/* Partner revenue chart */
+.partner-revenue-chart {
+    background: var(--partner-surface);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Partner contract status indicators */
+.partner-status-active {
+    background: #dcfce7;
+    color: var(--partner-success);
+}
+
+.partner-status-pending {
+    background: #fef3c7;
+    color: var(--partner-warning);
+}
+
+.partner-status-expired {
+    background: #fee2e2;
+    color: var(--partner-error);
+}
+
+.partner-status-terminated {
+    background: #f3f4f6;
+    color: var(--partner-text-muted);
+}
+
+/* Partner collaboration tools */
+.partner-collaboration-panel {
+    background: var(--partner-surface);
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.partner-collaboration-header {
+    background: var(--partner-background);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+    color: var(--partner-text);
+}
+
+.partner-collaboration-content {
+    padding: 1.5rem;
+}
+
+/* Partner metrics */
+.partner-metric {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--partner-surface);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+}
+
+.partner-metric:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.partner-metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--partner-primary);
+    margin-bottom: 0.5rem;
+}
+
+.partner-metric-label {
+    font-size: 0.875rem;
+    color: var(--partner-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Partner footer */
+.partner-footer {
+    background: var(--partner-background);
+    border-top: 1px solid #e5e7eb;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+/* Responsive design for partner layout */
+@media (max-width: 768px) {
+    .partner-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .partner-nav-item {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Partner animations */
+@keyframes partnerFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.partner-fade-in-up {
+    animation: partnerFadeInUp 0.6s ease-out;
+}

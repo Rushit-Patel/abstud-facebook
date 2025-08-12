@@ -1,0 +1,377 @@
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* Select2 Styling - Complete copy of kt-select CSS */
+
+/* Basic select2 container */
+.select2-container {
+    /* width: 100% !important; */
+}
+
+/* Main selection styles - copy from kt-select */
+.select2-container .select2-selection--single,
+.select2-container .select2-selection--multiple {
+    cursor: pointer;
+    appearance: none;
+    align-items: center;
+    gap: calc(var(--spacing)*2);
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    border-color: var(--input);
+    background-color: var(--background);
+    width: 100%;
+    padding-block: calc(var(--spacing)*0);
+    color: var(--foreground);
+    --tw-shadow: 0 1px 2px 0 var(--tw-shadow-color, #0000000d);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    --tw-shadow-color: #0000000d;
+    display: flex;
+    transition-property: color, box-shadow;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+    .select2-container .select2-selection--single,
+    .select2-container .select2-selection--multiple {
+        --tw-shadow-color: color-mix(in oklab, #0000000d var(--tw-shadow-alpha), transparent)
+    }
+}
+
+/* Placeholder styles */
+.select2-container .select2-selection--single .select2-selection__placeholder,
+.select2-container .select2-selection--multiple .select2-selection__placeholder {
+    color: var(--muted-foreground)
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+    .select2-container .select2-selection--single .select2-selection__placeholder,
+    .select2-container .select2-selection--multiple .select2-selection__placeholder {
+        color: color-mix(in oklab, var(--muted-foreground)80%, transparent)
+    }
+}
+
+/* Focus and open states */
+.select2-container--focus .select2-selection--single,
+.select2-container--focus .select2-selection--multiple,
+.select2-container--open .select2-selection--single,
+.select2-container--open .select2-selection--multiple {
+    border-color: var(--ring);
+    --tw-ring-shadow: var(--tw-ring-inset, )0 0 0 calc(3px + var(--tw-ring-offset-width))var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    --tw-ring-color: var(--ring);
+    --tw-outline-style: none;
+    outline-style: none
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+    .select2-container--focus .select2-selection--single,
+    .select2-container--focus .select2-selection--multiple,
+    .select2-container--open .select2-selection--single,
+    .select2-container--open .select2-selection--multiple {
+        --tw-ring-color: color-mix(in oklab, var(--ring)30%, transparent)
+    }
+}
+
+/* Disabled state */
+.select2-container--disabled .select2-selection--single,
+.select2-container--disabled .select2-selection--multiple {
+    cursor: not-allowed;
+    opacity: .6
+}
+
+/* Readonly state */
+.select2-container .select2-selection--single[readonly],
+.select2-container .select2-selection--multiple[readonly] {
+    opacity: .7
+}
+
+/* Invalid/error state */
+.select2-container .select2-selection--single[aria-invalid=true],
+.select2-container .select2-selection--multiple[aria-invalid=true] {
+    border-color: var(--destructive);
+    --tw-ring-color: var(--destructive)
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+    .select2-container .select2-selection--single[aria-invalid=true],
+    .select2-container .select2-selection--multiple[aria-invalid=true] {
+        border-color: color-mix(in oklab, var(--destructive)60%, transparent);
+        --tw-ring-color: color-mix(in oklab, var(--destructive)10%, transparent)
+    }
+}
+
+/* Single select background arrow */
+.select2-container .select2-selection--single {
+    background-repeat: no-repeat;
+    background-size: 14px 11px;
+}
+
+/* Multiple select removes background */
+.select2-container .select2-selection--multiple[multiple],
+.select2-container .select2-selection--single[size]:not([size="1"]) {
+    background-image: none;
+    padding-inline-end: var(--btn-default-px)
+}
+
+/* Firefox focus fix */
+.select2-container .select2-selection--single:-moz-focusring {
+    color: #0000;
+    text-shadow: none
+}
+
+/* Active state */
+.select2-container .select2-selection--single.active,
+.select2-container .select2-selection--multiple.active {
+    border-color: var(--ring);
+    --tw-ring-shadow: var(--tw-ring-inset, )0 0 0 calc(3px + var(--tw-ring-offset-width))var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    --tw-ring-color: var(--ring);
+    --tw-outline-style: none;
+    outline-style: none
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+    .select2-container .select2-selection--single.active,
+    .select2-container .select2-selection--multiple.active {
+        --tw-ring-color: color-mix(in oklab, var(--ring)30%, transparent)
+    }
+}
+
+/* Single select sizing and positioning - from kt-select */
+.select2-container .select2-selection--single {
+    height: calc(var(--spacing)*8.5);
+    gap: calc(var(--spacing)*1);
+    border-radius: calc(var(--radius) - 2px);
+    --tw-leading: var(--text-sm--line-height);
+    font-size: .8125rem;
+    line-height: var(--text-sm--line-height);
+    background-position: right .5rem center;
+    padding-inline-start: calc(var(--spacing)*3);
+    padding-inline-end: calc(var(--spacing)*6)
+}
+
+/* Multiple select sizing */
+.select2-container .select2-selection--multiple {
+    height: auto;
+    min-height: calc(var(--spacing)*8.5);
+    /* padding-block: calc(var(--spacing)*1.5); */
+    background-position: right .5rem top .675rem;
+    flex-wrap: wrap;
+    border-radius: calc(var(--radius) - 2px);
+    gap: calc(var(--spacing)*1);
+    font-size: .8125rem;
+    line-height: var(--text-sm--line-height);
+    /* padding-inline-start: calc(var(--spacing)*3);
+    padding-inline-end: calc(var(--spacing)*6) */
+}
+
+/* Dropdown styling - from kt-select-dropdown */
+.select2-dropdown {
+    border-radius: calc(var(--radius) - 2px);
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    border-color: var(--border);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, #0000001a), 0 2px 4px -2px var(--tw-shadow-color, #0000001a);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    --tw-shadow-color: #0000000d;
+    z-index: 9999;
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+    .select2-dropdown {
+        --tw-shadow-color: color-mix(in oklab, #0000000d var(--tw-shadow-alpha), transparent)
+    }
+}
+
+/* Search field styling - from kt-select-search */
+.select2-search--dropdown {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+    border-color: var(--border);
+    padding-inline: calc(var(--spacing)*4);
+    padding-block: calc(var(--spacing)*1)
+}
+
+.select2-search--dropdown .select2-search__field {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    border-color: var(--input);
+    background-color: var(--background);
+    border-radius: calc(var(--radius) - 2px);
+    background: transparent;
+    color: var(--foreground);
+    width: 100%;
+    outline: none;
+}
+
+/* Results container - from kt-select-options */
+.select2-results {
+    padding: calc(var(--spacing)*1)
+}
+
+.select2-results__options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Options styling - from kt-select-option */
+.select2-results__option {
+    cursor: pointer;
+    align-items: center;
+    gap: calc(var(--spacing)*2.5);
+    border-radius: calc(var(--radius) - 2px);
+    padding-inline: calc(var(--spacing)*2.5);
+    padding-block: calc(var(--spacing)*1.75);
+    text-align: start;
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+    flex-grow: 1;
+    display: flex;
+}
+
+@media (hover:hover) {
+    .select2-results__option:hover {
+        background-color: var(--accent);
+        color: var(--accent-foreground)
+    }
+}
+
+.select2-results__option[aria-disabled=true] {
+    pointer-events: none;
+    opacity: .6
+}
+
+.select2-results__option--highlighted {
+    background-color: var(--accent);
+    color: var(--accent-foreground)
+}
+
+.select2-results__option--selected {
+    background-color: var(--accent);
+    color: var(--accent-foreground)
+}
+
+/* Multiple selection choices */
+.select2-container .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: calc(var(--spacing)*0.5) calc(var(--spacing)*2);
+    margin: 2px;
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--muted-foreground);
+    margin-right: calc(var(--spacing)*1);
+    cursor: pointer;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: var(--destructive);
+}
+
+/* Rendered text styling */
+.select2-container .select2-selection--single .select2-selection__rendered {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    color: var(--foreground);
+    padding: 0;
+    margin: 0;
+}
+
+/* Arrow styling */
+.select2-container .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    position: absolute;
+    right: calc(var(--spacing)*2);
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(var(--spacing)*4);
+    pointer-events: none;
+}
+
+/* RTL support */
+[dir=rtl] .select2-container .select2-selection--single {
+    background-position: .5rem center;
+}
+
+[dir=rtl] .select2-container .select2-selection--multiple {
+    background-position: .5rem .675rem;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__display{
+    cursor: default;
+    padding-left: 14px;
+    padding-right: 5px;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple{
+    border: none;
+}
+
+/* new dashboard */
+
+.info-gradient{
+    background: linear-gradient(180deg, rgba(70,202,235, .12) 0, rgba(70,202,235, .03) 100%);
+}
+.success-gradient{
+    background: linear-gradient(180deg, rgba(54,199,108, .12) 0, rgba(54,199,108, .03) 100%);
+}
+.danger-gradient{
+    background: linear-gradient(180deg, rgba(255,102,146, .12) 0, rgba(255,102,146, .03) 100%);
+}
+.secondary-gradient{
+    background: linear-gradient(180deg, rgba(22,205,199, .12) 0, rgba(22,205,199, .03) 100%);
+}
+.warning-gradient {
+    background: linear-gradient(180deg, rgba(248,194,10, .12) 0, rgba(248,194,10, .03) 100%);
+}
+.primary-gradient {
+    background: linear-gradient(180deg, rgba(99,91,255, .12) 0, rgba(99,91,255, .03) 100%);
+}
+
+
+.text-bg-primary {
+    color: #fff!important;
+    background-color: RGBA(99, 91, 255,var(--bs-bg-opacity,1))!important
+}
+
+.text-bg-secondary {
+    color: #fff!important;
+    background-color: RGBA(22, 205, 199,var(--bs-bg-opacity,1))!important
+}
+
+.text-bg-success {
+    color: #fff!important;
+    background-color: RGBA(54, 199, 108,var(--bs-bg-opacity,1))!important
+}
+
+.text-bg-info {
+    color: #fff!important;
+    background-color: RGBA(70, 202, 235,var(--bs-bg-opacity,1))!important
+}
+
+.text-bg-warning {
+    color: #fff!important;
+    background-color: RGBA(248, 194, 10,var(--bs-bg-opacity,1))!important
+}
+
+.text-bg-danger {
+    color: #fff!important;
+    background-color: RGBA(255, 102, 146,var(--bs-bg-opacity,1))!important
+}
