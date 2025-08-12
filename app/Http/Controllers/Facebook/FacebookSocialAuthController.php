@@ -38,7 +38,8 @@ class FacebookSocialAuthController extends Controller
                     'pages_manage_metadata',
                     'email',
                     'business_management',
-                    'ads_management'
+                    'ads_management',
+                    // 'pages_read_user_content'
                 ])
                 ->redirectUrl(route('facebook.auth.callback'))
                 ->redirect();
