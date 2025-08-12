@@ -126,10 +126,9 @@ class RolesAndPermissionsSeeder extends Seeder
         // Create roles
         $roles = [
             'Super Admin',
-            'Branch Admin',
+            'Admin',
             'Frontdesk Executive',
-            'Visa Advisor',
-            'Country Head'
+            'Visa Advisor'
         ];
 
         foreach ($roles as $roleName) {
@@ -149,7 +148,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $superAdmin = Role::findByName('Super Admin');
         $superAdmin->givePermissionTo(Permission::all());
 
-        $branchAdmin = Role::findByName('Branch Admin');
+        $branchAdmin = Role::findByName('Admin');
         $branchAdmin->givePermissionTo([
             'user:create',
             'user:edit',
@@ -212,16 +211,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'invoice:edit',
             'invoice:show',
             'coaching:show'
-        ]);
-        $countryHead = Role::findByName('Country Head');
-        $countryHead->givePermissionTo([
-            'lead:create',
-            'lead:edit',
-            'lead:country',
-            'lead:show',
-            'follow-up:create',
-            'follow-up:edit',
-            'follow-up:show',
         ]);
     }
 }

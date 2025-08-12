@@ -18,13 +18,13 @@ class CompanySetupSeeder extends Seeder
         // Company Settings Data
         $companyData = [
             'id' => 1,
-            'company_name' => 'Global Colliance',
-            'company_logo' => 'company/logos/GXW7ZAPRI1nnTlLvQ7lJya0q17vMbroE43kO8p2h.png',
-            'company_favicon' => 'company/favicons/dSvM3uLkO2NFuZG0T1C6ioxf2gWJ7d7CazA42Fzn.png',
-            'website_url' => 'https://globalcolliance.com',
-            'company_address' => 'Panjrapole, 303/304, Addor Aspire - 1, University Rd, near Old Passport Office, Ahmedabad, Gujarat 380015',
-            'phone' => null,
-            'email' => null,
+            'company_name' => 'Abstud',
+            'company_logo' => 'default/images/logo/logo.png',
+            'company_favicon' => 'default/images/logo/fav.png',
+            'website_url' => 'https://abstud.io/',
+            'company_address' => '1201, The Capital 2, Science City Rd, Sola, Ahmedabad, Gujarat 380060',
+            'phone' => '90995 89276',
+            'email' => 'projects@abstud.io',
             'country_id' => 101,
             'state_id' => 4030,
             'city_id' => 57606,
@@ -35,57 +35,25 @@ class CompanySetupSeeder extends Seeder
         // Roles Data
         $roles = [
             'Super Admin',
-            'Branch Admin',
+            'Admin',
             'Frontdesk Executive',
-            'Visa Advisor',
-            'Country Head'
         ];
 
         // Branches Data
         $branchesData = [
             [
                 'id' => 1,
-                'branch_code' => 'GCHO',
+                'branch_code' => 'ABHO',
                 'branch_name' => 'Main Branch',
-                'address' => 'Panjrapole, 303/304, Addor Aspire - 1, University Rd, near Old Passport Office, Ahmedabad, Gujarat 380015',
+                'address' => '1201, The Capital 2, Science City Rd, Sola, Ahmedabad, Gujarat 380060',
                 'country_id' => 101,
                 'state_id' => 4030,
                 'city_id' => 57606,
-                'postal_code' => '380015',
-                'phone' => '7574033366',
-                'email' => 'info@globalcolliance.com',
+                'postal_code' => '380060',
+                'phone' => '9099589276',
+                'email' => 'projects@abstud.io',
                 'timezone' => null,
                 'is_main_branch' => true,
-                'is_active' => true,
-            ],
-            [
-                'id' => 2,
-                'branch_code' => 'GCMB',
-                'branch_name' => 'Mumbai Branch',
-                'address' => 'Mumbai Office, Bandra Kurla Complex, Mumbai, Maharashtra 400051',
-                'country_id' => 101,
-                'state_id' => 4008,
-                'city_id' => 56949,
-                'postal_code' => '400051',
-                'phone' => '9876543210',
-                'email' => 'mumbai@globalcolliance.com',
-                'timezone' => null,
-                'is_main_branch' => false,
-                'is_active' => true,
-            ],
-            [
-                'id' => 3,
-                'branch_code' => 'GCDL',
-                'branch_name' => 'Delhi Branch',
-                'address' => 'Delhi Office, Connaught Place, New Delhi 110001',
-                'country_id' => 101,
-                'state_id' => 4012,
-                'city_id' => 56968,
-                'postal_code' => '110001',
-                'phone' => '9876543211',
-                'email' => 'delhi@globalcolliance.com',
-                'timezone' => null,
-                'is_main_branch' => false,
                 'is_active' => true,
             ]
         ];
@@ -95,150 +63,47 @@ class CompanySetupSeeder extends Seeder
             // Main Branch Users
             [
                 'name' => 'Super Admin',
-                'email' => 'admin@globalcolliance.com',
+                'email' => 'admin@abstud.io',
                 'username' => 'admin',
                 'password' => Hash::make('password'),
                 'base_password' => base64_encode('password'),
-                'phone' => '7574033366',
+                'phone' => '9099589276',
                 'is_active' => true,
-                'branch_code' => 'GCHO',
+                'branch_code' => 'ABHO',
                 'role' => 'Super Admin'
             ],
             [
-                'name' => 'Branch Admin Ahmedabad',
-                'email' => 'branchadmin.ahd@globalcolliance.com',
-                'username' => 'branchadmin_ahd',
+                'name' => 'Admin',
+                'email' => 'projects@abstud.io',
+                'username' => 'admin1',
                 'password' => Hash::make('password'),
                 'base_password' => base64_encode('password'),
-                'phone' => '7574033367',
+                'phone' => '9099589276',
                 'is_active' => true,
-                'branch_code' => 'GCHO',
-                'role' => 'Branch Admin'
+                'branch_code' => 'ABHO',
+                'role' => 'Admin'
             ],
             [
                 'name' => 'Frontdesk Executive Ahmedabad',
-                'email' => 'frontdesk.ahd@globalcolliance.com',
+                'email' => 'frontdesk.ahd@abstud.io',
                 'username' => 'frontdesk_ahd',
                 'password' => Hash::make('password'),
                 'base_password' => base64_encode('password'),
                 'phone' => '7574033368',
                 'is_active' => true,
-                'branch_code' => 'GCHO',
+                'branch_code' => 'ABHO',
                 'role' => 'Frontdesk Executive'
             ],
             [
                 'name' => 'Visa Advisor Ahmedabad',
-                'email' => 'visaadvisor.ahd@globalcolliance.com',
+                'email' => 'visaadvisor.ahd@abstud.io',
                 'username' => 'visaadvisor_ahd',
                 'password' => Hash::make('password'),
                 'base_password' => base64_encode('password'),
-                'phone' => '7574033369',
+                'phone' => '9099589276',
                 'is_active' => true,
-                'branch_code' => 'GCHO',
+                'branch_code' => 'ABHO',
                 'role' => 'Visa Advisor'
-            ],
-            [
-                'name' => 'Country Head Ahmedabad',
-                'email' => 'countryhead.ahd@globalcolliance.com',
-                'username' => 'countryhead_ahd',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '7574033370',
-                'is_active' => true,
-                'branch_code' => 'GCHO',
-                'role' => 'Country Head'
-            ],
-
-            // Mumbai Branch Users
-            [
-                'name' => 'Branch Admin Mumbai',
-                'email' => 'branchadmin.mumbai@globalcolliance.com',
-                'username' => 'branchadmin_mumbai',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543212',
-                'is_active' => true,
-                'branch_code' => 'GCMB',
-                'role' => 'Branch Admin'
-            ],
-            [
-                'name' => 'Frontdesk Executive Mumbai',
-                'email' => 'frontdesk.mumbai@globalcolliance.com',
-                'username' => 'frontdesk_mumbai',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543213',
-                'is_active' => true,
-                'branch_code' => 'GCMB',
-                'role' => 'Frontdesk Executive'
-            ],
-            [
-                'name' => 'Visa Advisor Mumbai',
-                'email' => 'visaadvisor.mumbai@globalcolliance.com',
-                'username' => 'visaadvisor_mumbai',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543214',
-                'is_active' => true,
-                'branch_code' => 'GCMB',
-                'role' => 'Visa Advisor'
-            ],
-            [
-                'name' => 'Country Head Mumbai',
-                'email' => 'countryhead.mumbai@globalcolliance.com',
-                'username' => 'countryhead_mumbai',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543215',
-                'is_active' => true,
-                'branch_code' => 'GCMB',
-                'role' => 'Country Head'
-            ],
-
-            // Delhi Branch Users
-            [
-                'name' => 'Branch Admin Delhi',
-                'email' => 'branchadmin.delhi@globalcolliance.com',
-                'username' => 'branchadmin_delhi',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543216',
-                'is_active' => true,
-                'branch_code' => 'GCDL',
-                'role' => 'Branch Admin'
-            ],
-            [
-                'name' => 'Frontdesk Executive Delhi',
-                'email' => 'frontdesk.delhi@globalcolliance.com',
-                'username' => 'frontdesk_delhi',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543217',
-                'is_active' => true,
-                'branch_code' => 'GCDL',
-                'role' => 'Frontdesk Executive'
-            ],
-            [
-                'name' => 'Visa Advisor Delhi',
-                'email' => 'visaadvisor.delhi@globalcolliance.com',
-                'username' => 'visaadvisor_delhi',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543218',
-                'is_active' => true,
-                'branch_code' => 'GCDL',
-                'role' => 'Visa Advisor'
-            ],
-            [
-                'name' => 'Country Head Delhi',
-                'email' => 'countryhead.delhi@globalcolliance.com',
-                'username' => 'countryhead_delhi',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9876543219',
-                'is_active' => true,
-                'branch_code' => 'GCDL',
-                'role' => 'Country Head'
             ]
         ];
 

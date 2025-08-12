@@ -14,6 +14,7 @@
         "blade-ui-kit/blade-icons": "^1.8",
         "kreait/firebase-php": "^5.26",
         "laravel/framework": "^12.0",
+        "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "~3.1",
         "opcodesio/log-viewer": "^3.18",

@@ -82,6 +82,8 @@ Route::prefix('team')->name('team.')->middleware('company.setup')->group(functio
     require __DIR__.'/Team/ajax.php';
 });
 
+// Facebook Integration Routes
+require __DIR__.'/facebook_web.php';
 
 // Client Routes
 Route::prefix('client')->name('client.')->middleware('company.setup')->group(function () {

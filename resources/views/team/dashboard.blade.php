@@ -10,6 +10,9 @@
         <div class="kt-container-fixed">
             <div class="grid gap-2 lg:gap-2">
                 @haspermission('lead:*')
+                    <x-team.dashboard.facebook.facebook-card />
+                @endhaspermission
+                @haspermission('lead:*')
                 <div class="grid lg:grid-cols-2 gap-7.5 pb-5">
                     <x-team.card title="Leads Analysis" headerClass="" titleClass="text-xl text-gray-700">
                         <x-slot name="header">

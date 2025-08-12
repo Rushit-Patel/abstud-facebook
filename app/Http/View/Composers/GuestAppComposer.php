@@ -71,10 +71,10 @@ class GuestAppComposer
      */
     private function getDefaultLogo(): string
     {
-        return asset('images/default-logo.png');
+        return asset('default/images/logo/logo.png');
     }
     private function getDefaultFavicon(): string
     {
-        return asset('images/default-favicon.png');
+        return asset('default/images/logo/fav.png');
     }
 }
