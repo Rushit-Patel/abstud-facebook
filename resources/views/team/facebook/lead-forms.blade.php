@@ -120,7 +120,7 @@
                                     </a>
                                 </div>
                                 <div class="flex gap-2">
-                                    <a href="{{ route('facebook.mappings', $form) }}" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">
+                                    <a href="{{ route('facebook.lead-forms.mappings', $form) }}" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">
                                         Field Mapping
                                     </a>
                                     <a href="{{ route('facebook.leads') }}?form_id={{ $form->id }}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">

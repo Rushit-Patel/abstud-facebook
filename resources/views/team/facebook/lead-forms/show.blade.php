@@ -125,7 +125,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h4 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h4>
                         <div class="space-y-3">
-                            <a href="{{ route('facebook.mappings', $leadForm) }}" class="flex items-center gap-3 p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                            <a href="{{ route('facebook.lead-forms.mappings', $leadForm) }}" class="flex items-center gap-3 p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
                                 <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
@@ -133,7 +133,7 @@
                                 </div>
                                 <span class="font-medium text-gray-900">Field Mappings</span>
                             </a>
-                            <a href="{{ route('facebook.custom-mappings', $leadForm) }}" class="flex items-center gap-3 p-3 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                            <a href="{{ route('facebook.lead-forms.custom-mappings', $leadForm) }}" class="flex items-center gap-3 p-3 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
                                 <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
@@ -159,7 +159,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">Parameter Mappings</h3>
-                        <a href="{{ route('facebook.mappings', $leadForm) }}" class="bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
+                        <a href="{{ route('facebook.lead-forms.mappings', $leadForm) }}" class="bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
                             Manage Mappings
                         </a>
                     </div>
@@ -205,7 +205,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">Custom Field Mappings</h3>
-                        <a href="{{ route('facebook.custom-mappings', $leadForm) }}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
+                        <a href="{{ route('facebook.lead-forms.custom-mappings', $leadForm) }}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
                             Manage Custom Mappings
                         </a>
                     </div>

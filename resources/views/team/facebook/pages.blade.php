@@ -119,7 +119,7 @@
                                             {{ $page->is_active ? 'Deactivate' : 'Activate' }}
                                         </button>
                                     </form>
-                                    <form action="{{ route('facebook.sync-lead-forms', $page) }}" method="POST" class="flex-1">
+                                    <form action="{{ route('facebook.pages.sync-forms', $page) }}" method="POST" class="flex-1">
                                         @csrf
                                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
                                             Sync Forms
