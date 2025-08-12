@@ -48,8 +48,10 @@ class FacebookIntegrationController extends Controller
      */
     public function businessAccount()
     {
-        // Redirect to dashboard since we don't have a separate business account view
-        return redirect()->route('facebook.dashboard');
+        $branchId = Auth::user()->branch_id ?? 1;
+        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
+
+        return view('team.facebook.business-account', compact('businessAccount'));
     }
 
     /**
@@ -169,8 +171,15 @@ class FacebookIntegrationController extends Controller
      */
     public function pages()
     {
-        // Redirect to dashboard since we don't have a separate pages view
-        return redirect()->route('facebook.dashboard')->with('info', 'Pages management is available in the dashboard');
+        $branchId = Auth::user()->branch_id ?? 1;
+        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
+
+        $pages = collect();
+        if ($businessAccount) {
+            $pages = $businessAccount->facebookPages()->with('facebookLeadForms')->get();
+        }
+
+        return view('team.facebook.pages', compact('pages', 'businessAccount'));
     }
 
     /**
@@ -211,8 +220,13 @@ class FacebookIntegrationController extends Controller
      */
     public function leadForms()
     {
-        // Redirect to dashboard since we don't have a separate lead forms view
-        return redirect()->route('facebook.dashboard')->with('info', 'Lead forms management is available in the dashboard');
+        $branchId = Auth::user()->branch_id ?? 1;
+        
+        $leadForms = FacebookLeadForm::whereHas('facebookPage.facebookBusinessAccount', function ($query) use ($branchId) {
+            $query->where('branch_id', $branchId);
+        })->with(['facebookPage', 'facebookLeads'])->get();
+
+        return view('team.facebook.lead-forms', compact('leadForms'));
     }
 
     /**
@@ -220,8 +234,9 @@ class FacebookIntegrationController extends Controller
      */
     public function showLeadForm(FacebookLeadForm $leadForm)
     {
-        // Redirect to dashboard since we don't have detailed views yet
-        return redirect()->route('facebook.dashboard')->with('info', 'Lead form details are available in the dashboard');
+        $leadForm->load(['facebookPage', 'facebookLeads', 'facebookParameterMappings', 'facebookCustomFieldMappings']);
+
+        return view('team.facebook.lead-forms.show', compact('leadForm'));
     }
 
     /**
@@ -357,8 +372,28 @@ class FacebookIntegrationController extends Controller
      */
     public function leads(Request $request)
     {
-        // Redirect to dashboard since we don't have detailed views yet
-        return redirect()->route('facebook.dashboard')->with('info', 'Leads management is available in the dashboard');
+        $branchId = Auth::user()->branch_id ?? 1;
+
+        $query = FacebookLead::whereHas('facebookLeadForm.facebookPage.facebookBusinessAccount', function ($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        })->with(['facebookLeadForm.facebookPage', 'facebookLeadSource']);
+
+        // Apply filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('facebook_created_time', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('facebook_created_time', '<=', $request->date_to);
+        }
+
+        $leads = $query->orderBy('facebook_created_time', 'desc')->paginate(20);
+
+        return view('team.facebook.leads', compact('leads'));
     }
 
     /**
