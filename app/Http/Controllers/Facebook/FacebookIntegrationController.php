@@ -40,7 +40,7 @@ class FacebookIntegrationController extends Controller
             $stats = $this->integrationService->getProcessingStats($businessAccount->id);
         }
 
-        return view('facebook.dashboard', compact('businessAccount', 'stats'));
+        return view('team.facebook.dashboard', compact('businessAccount', 'stats'));
     }
 
     /**
@@ -48,10 +48,8 @@ class FacebookIntegrationController extends Controller
      */
     public function businessAccount()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        return view('facebook.business-account', compact('businessAccount'));
+        // Redirect to dashboard since we don't have a separate business account view
+        return redirect()->route('facebook.dashboard');
     }
 
     /**
@@ -171,15 +169,8 @@ class FacebookIntegrationController extends Controller
      */
     public function pages()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        $pages = collect();
-        if ($businessAccount) {
-            $pages = $businessAccount->facebookPages()->with('facebookLeadForms')->get();
-        }
-
-        return view('facebook.pages', compact('pages', 'businessAccount'));
+        // Redirect to dashboard since we don't have a separate pages view
+        return redirect()->route('facebook.dashboard')->with('info', 'Pages management is available in the dashboard');
     }
 
     /**
@@ -220,13 +211,8 @@ class FacebookIntegrationController extends Controller
      */
     public function leadForms()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        
-        $leadForms = FacebookLeadForm::whereHas('facebookPage.facebookBusinessAccount', function ($query) use ($branchId) {
-            $query->where('branch_id', $branchId);
-        })->with(['facebookPage', 'facebookLeads'])->get();
-
-        return view('facebook.lead-forms', compact('leadForms'));
+        // Redirect to dashboard since we don't have a separate lead forms view
+        return redirect()->route('facebook.dashboard')->with('info', 'Lead forms management is available in the dashboard');
     }
 
     /**
@@ -234,9 +220,8 @@ class FacebookIntegrationController extends Controller
      */
     public function showLeadForm(FacebookLeadForm $leadForm)
     {
-        $leadForm->load(['facebookPage', 'facebookLeads', 'facebookParameterMappings', 'facebookCustomFieldMappings']);
-
-        return view('facebook.lead-forms.show', compact('leadForm'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Lead form details are available in the dashboard');
     }
 
     /**
@@ -254,9 +239,8 @@ class FacebookIntegrationController extends Controller
      */
     public function mappings(FacebookLeadForm $leadForm)
     {
-        $mappings = $leadForm->facebookParameterMappings()->get();
-
-        return view('facebook.mappings', compact('leadForm', 'mappings'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Parameter mappings are configurable in the dashboard');
     }
 
     /**
@@ -315,9 +299,8 @@ class FacebookIntegrationController extends Controller
      */
     public function customMappings(FacebookLeadForm $leadForm)
     {
-        $customMappings = $leadForm->facebookCustomFieldMappings()->get();
-
-        return view('facebook.custom-mappings', compact('leadForm', 'customMappings'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Custom field mappings are configurable in the dashboard');
     }
 
     /**
@@ -374,28 +357,8 @@ class FacebookIntegrationController extends Controller
      */
     public function leads(Request $request)
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-
-        $query = FacebookLead::whereHas('facebookLeadForm.facebookPage.facebookBusinessAccount', function ($q) use ($branchId) {
-            $q->where('branch_id', $branchId);
-        })->with(['facebookLeadForm.facebookPage', 'facebookLeadSource']);
-
-        // Apply filters
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('facebook_created_time', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('facebook_created_time', '<=', $request->date_to);
-        }
-
-        $leads = $query->orderBy('facebook_created_time', 'desc')->paginate(20);
-
-        return view('facebook.leads', compact('leads'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Leads management is available in the dashboard');
     }
 
     /**
@@ -403,9 +366,8 @@ class FacebookIntegrationController extends Controller
      */
     public function showLead(FacebookLead $lead)
     {
-        $lead->load(['facebookLeadForm.facebookPage', 'facebookLeadSource']);
-
-        return view('facebook.leads.show', compact('lead'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Lead details are available in the dashboard');
     }
 
     /**
@@ -437,15 +399,8 @@ class FacebookIntegrationController extends Controller
      */
     public function analytics()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        $stats = [];
-        if ($businessAccount) {
-            $stats = $this->integrationService->getProcessingStats($businessAccount->id);
-        }
-
-        return view('facebook.analytics', compact('stats'));
+        // Redirect to main dashboard since analytics are included there
+        return redirect()->route('facebook.dashboard')->with('info', 'Analytics are available in the main dashboard');
     }
 
     /**
@@ -453,18 +408,8 @@ class FacebookIntegrationController extends Controller
      */
     public function leadSources()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-
-        $leadSources = DB::table('facebook_lead_sources as fls')
-            ->join('facebook_leads as fl', 'fls.facebook_lead_id', '=', 'fl.id')
-            ->join('facebook_lead_forms as flf', 'fl.facebook_lead_form_id', '=', 'flf.id')
-            ->join('facebook_pages as fp', 'flf.facebook_page_id', '=', 'fp.id')
-            ->join('facebook_business_accounts as fba', 'fp.facebook_business_account_id', '=', 'fba.id')
-            ->where('fba.branch_id', $branchId)
-            ->select('fls.*', 'fl.name as lead_name', 'flf.form_name', 'fp.page_name')
-            ->paginate(20);
-
-        return view('facebook.lead-sources', compact('leadSources'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Lead sources information is available in the dashboard');
     }
 
     /**
@@ -472,15 +417,8 @@ class FacebookIntegrationController extends Controller
      */
     public function webhookSettings()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        $webhookSettings = null;
-        if ($businessAccount) {
-            $webhookSettings = $businessAccount->webhookSettings;
-        }
-
-        return view('facebook.webhook-settings', compact('businessAccount', 'webhookSettings'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'Webhook settings are configurable in the dashboard');
     }
 
     /**
@@ -548,10 +486,8 @@ class FacebookIntegrationController extends Controller
      */
     public function settings()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        return view('facebook.settings', compact('businessAccount'));
+        // Redirect to dashboard since we don't have detailed views yet
+        return redirect()->route('facebook.dashboard')->with('info', 'General settings are available in the dashboard');
     }
 
     /**
