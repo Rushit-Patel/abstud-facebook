@@ -777,4 +777,20 @@ class FacebookIntegrationController extends Controller
             'sample_values' => $sampleValues
         ]);
     }
+
+    /**
+     * Privacy Policy Page
+     */
+    public function privacyPolicy()
+    {
+        return view('facebook.legal.privacy-policy');
+    }
+
+    /**
+     * Terms of Service Page
+     */
+    public function termsOfService()
+    {
+        return view('facebook.legal.terms-of-service');
+    }
 }

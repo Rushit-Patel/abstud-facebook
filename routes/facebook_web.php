@@ -22,6 +22,12 @@ Route::middleware(['auth', 'web'])->prefix('facebook')->name('facebook.auth.')->
     Route::post('webhook', [FacebookWebhookController::class, 'handle'])->name('facebook.webhook.handle');
 // });
 
+// Public Legal Pages (no auth required)
+Route::prefix('facebook')->name('facebook.')->group(function () {
+    Route::get('privacy-policy', [FacebookIntegrationController::class, 'privacyPolicy'])->name('privacy-policy');
+    Route::get('terms-of-service', [FacebookIntegrationController::class, 'termsOfService'])->name('terms-of-service');
+});
+
 // Protected Facebook Integration Web Routes
 Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('facebook.')->group(function () {
     

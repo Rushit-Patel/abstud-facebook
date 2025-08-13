@@ -41,7 +41,7 @@ return [
         'redirect' => env('FACEBOOK_REDIRECT_URL'),
         'webhook' => [
             'verify_token' => env('FACEBOOK_WEBHOOK_VERIFY_TOKEN'),
-            'url' => env('FACEBOOK_WEBHOOK_URL', '/facebook/webhook'),
+            'url' => env('FACEBOOK_WEBHOOK_URL', '/webhook'),
         ],
     ],
 

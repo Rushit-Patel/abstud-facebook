@@ -54,7 +54,7 @@ class FacebookWebhookController extends Controller
         ]);
 
         // Return the challenge to complete verification
-        return response($hubChallenge, 200);
+        return $request->hub_challenge;
     }
 
     /**
@@ -62,7 +62,7 @@ class FacebookWebhookController extends Controller
      */
     public function handle(Request $request)
     {
-        try {
+        // try {
             $data = $request->all();
 
             Log::info('Facebook webhook received', [
@@ -86,13 +86,13 @@ class FacebookWebhookController extends Controller
             foreach ($data['entry'] ?? [] as $entry) {
                 $this->processWebhookEntry($entry);
             }
-        } catch (Exception $e) {
-            Log::error('Error processing Facebook webhook', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'request_data' => $request->all(),
-            ]);
-        }
+        // } catch (Exception $e) {
+        //     Log::error('Error processing Facebook webhook', [
+        //         'error' => $e->getMessage(),
+        //         'trace' => $e->getTraceAsString(),
+        //         'request_data' => $request->all(),
+        //     ]);
+        // }
         return response('OK', 200);
 
     }

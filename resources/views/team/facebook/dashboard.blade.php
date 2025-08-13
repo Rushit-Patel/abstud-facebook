@@ -366,6 +366,15 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Footer with Legal Links -->
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <div class="flex justify-center items-center gap-6 text-sm text-gray-500">
+                    <span>Facebook Integration Service</span>
+                    <a href="{{ route('facebook.privacy-policy') }}" class="hover:text-blue-600 transition-colors">Privacy Policy</a>
+                    <a href="{{ route('facebook.terms-of-service') }}" class="hover:text-blue-600 transition-colors">Terms of Service</a>
+                </div>
+            </div>
         </div>
     </x-slot>
 
