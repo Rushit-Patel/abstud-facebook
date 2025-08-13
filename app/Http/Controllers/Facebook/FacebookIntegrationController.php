@@ -300,7 +300,7 @@ class FacebookIntegrationController extends Controller
             }
 
             // Subscribe page to webhook with leadgen field
-            $response = \Illuminate\Support\Facades\Http::post("https://graph.facebook.com/v18.0/{$page->facebook_page_id}/subscribed_apps", [
+            $response = \Illuminate\Support\Facades\Http::post("https://graph.facebook.com/v23.0/{$page->facebook_page_id}/subscribed_apps", [
                 'subscribed_fields' => 'leadgen',
                 'access_token' => $page->page_access_token ?: $businessAccount->access_token,
             ]);
@@ -337,7 +337,7 @@ class FacebookIntegrationController extends Controller
             }
 
             // Unsubscribe page from webhook
-            $response = \Illuminate\Support\Facades\Http::delete("https://graph.facebook.com/v18.0/{$page->facebook_page_id}/subscribed_apps", [
+            $response = \Illuminate\Support\Facades\Http::delete("https://graph.facebook.com/v23.0/{$page->facebook_page_id}/subscribed_apps", [
                 'access_token' => $page->page_access_token ?: $businessAccount->access_token,
             ]);
 

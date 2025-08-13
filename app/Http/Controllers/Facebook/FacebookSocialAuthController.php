@@ -71,7 +71,7 @@ class FacebookSocialAuthController extends Controller
             }
 
             // Get Facebook Business Accounts
-            $businessAccountsResponse = Http::get("https://graph.facebook.com/v18.0/me/businesses", [
+            $businessAccountsResponse = Http::get("https://graph.facebook.com/v23.0/me/businesses", [
                 'access_token' => $token,
                 'fields' => 'id,name,verification_status,primary_page'
             ]);
@@ -83,7 +83,7 @@ class FacebookSocialAuthController extends Controller
             $businessAccounts = $businessAccountsResponse->json()['data'] ?? [];
             
             // Get Facebook Pages
-            $pagesResponse = Http::get("https://graph.facebook.com/v18.0/me/accounts", [
+            $pagesResponse = Http::get("https://graph.facebook.com/v23.0/me/accounts", [
                 'access_token' => $token,
                 'fields' => 'id,name,access_token,category,category_list,verification_status'
             ]);
@@ -217,7 +217,7 @@ class FacebookSocialAuthController extends Controller
             }
 
             // Try to refresh the token by making a test API call
-            $response = Http::get("https://graph.facebook.com/v18.0/me", [
+            $response = Http::get("https://graph.facebook.com/v23.0/me", [
                 'access_token' => $businessAccount->access_token,
                 'fields' => 'id,name'
             ]);

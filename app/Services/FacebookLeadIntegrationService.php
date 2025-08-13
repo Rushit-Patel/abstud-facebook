@@ -561,7 +561,7 @@ class FacebookLeadIntegrationService
             foreach ($leadForms as $leadForm) {
                 try {
                     // Get leads for this lead form from Facebook
-                    $response = Http::get("https://graph.facebook.com/v18.0/{$leadForm->facebook_lead_form_id}/leads", [
+                    $response = Http::get("https://graph.facebook.com/v23.0/{$leadForm->facebook_lead_form_id}/leads", [
                         'access_token' => $businessAccount->access_token,
                         'fields' => 'id,created_time,field_data',
                         'limit' => 100, // Facebook's max limit
@@ -667,7 +667,7 @@ class FacebookLeadIntegrationService
     private function callFacebookApi(string $endpoint, string $accessToken, array $params = []): array
     {
         try {
-            $url = 'https://graph.facebook.com/v18.0' . $endpoint;
+            $url = 'https://graph.facebook.com/v23.0' . $endpoint;
             $params['access_token'] = $accessToken;
 
             $ch = curl_init();

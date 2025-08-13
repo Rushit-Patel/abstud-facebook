@@ -304,7 +304,7 @@
                         <x-team.forms.input 
                             name="api_version" 
                             label="API Version" 
-                            value="v18.0"
+                            value="v23.0"
                             disabled="true" />
                             
                         <x-team.forms.input 
