@@ -27,6 +27,7 @@ Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('f
     
     // Dashboard
     Route::get('/', [FacebookIntegrationController::class, 'dashboard'])->name('dashboard');
+    Route::get('overview', [FacebookIntegrationController::class, 'overview'])->name('overview');
     
     // Business Account Management
     Route::get('business-account', [FacebookIntegrationController::class, 'businessAccount'])->name('business-account');
@@ -39,6 +40,8 @@ Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('f
     Route::get('pages', [FacebookIntegrationController::class, 'pages'])->name('pages');
     Route::post('pages/{page}/toggle', [FacebookIntegrationController::class, 'togglePage'])->name('pages.toggle');
     Route::post('pages/{page}/sync-forms', [FacebookIntegrationController::class, 'syncLeadForms'])->name('pages.sync-forms');
+    Route::post('pages/{page}/subscribe', [FacebookIntegrationController::class, 'subscribePageToWebhook'])->name('pages.subscribe');
+    Route::post('pages/{page}/unsubscribe', [FacebookIntegrationController::class, 'unsubscribePageFromWebhook'])->name('pages.unsubscribe');
     
     // Lead Forms Management
     Route::get('lead-forms', [FacebookIntegrationController::class, 'leadForms'])->name('lead-forms');

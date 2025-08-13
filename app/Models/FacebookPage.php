@@ -21,12 +21,18 @@ class FacebookPage extends Model
         'profile_picture_url',
         'is_published',
         'is_active',
+        'webhook_subscribed',
+        'webhook_subscribed_at',
+        'webhook_subscribed_fields',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_published' => 'boolean',
         'fan_count' => 'integer',
+        'webhook_subscribed' => 'boolean',
+        'webhook_subscribed_at' => 'datetime',
+        'webhook_subscribed_fields' => 'array',
     ];
 
     protected $hidden = [

@@ -74,6 +74,48 @@ class FacebookIntegrationController extends Controller
     }
 
     /**
+     * Integration Overview - Simple status page
+     */
+    public function overview()
+    {
+        $branchId = Auth::user()->branch_id ?? 1;
+        
+        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
+        
+        // Webhook configuration status
+        $webhookConfigured = !empty(config('services.facebook.webhook.url')) && 
+                           !empty(config('services.facebook.webhook.verify_token'));
+        
+        // Facebook app configuration status
+        $facebookConfigured = !empty(config('services.facebook.client_id')) && 
+                             config('services.facebook.client_id') !== 'your_facebook_app_id' &&
+                             !empty(config('services.facebook.client_secret'));
+        
+        $overview = [
+            'facebook_configured' => $facebookConfigured,
+            'webhook_configured' => $webhookConfigured,
+            'business_account_connected' => $businessAccount && $businessAccount->status === 'connected',
+            'total_pages' => 0,
+            'subscribed_pages' => 0,
+            'total_forms' => 0,
+            'total_leads' => 0,
+        ];
+        
+        if ($businessAccount) {
+            $overview['total_pages'] = $businessAccount->facebookPages()->count();
+            $overview['subscribed_pages'] = $businessAccount->facebookPages()->where('webhook_subscribed', true)->count();
+            $overview['total_forms'] = FacebookLeadForm::whereHas('facebookPage', function ($query) use ($businessAccount) {
+                $query->where('facebook_business_account_id', $businessAccount->id);
+            })->count();
+            $overview['total_leads'] = FacebookLead::whereHas('facebookLeadForm.facebookPage', function ($query) use ($businessAccount) {
+                $query->where('facebook_business_account_id', $businessAccount->id);
+            })->count();
+        }
+        
+        return view('team.facebook.overview', compact('businessAccount', 'overview'));
+    }
+
+    /**
      * Business Account Management
      */
     public function businessAccount()
@@ -242,6 +284,79 @@ class FacebookIntegrationController extends Controller
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Failed to sync lead forms: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Subscribe Page to Webhook for Real-time Leads
+     */
+    public function subscribePageToWebhook(FacebookPage $page)
+    {
+        try {
+            $businessAccount = $page->facebookBusinessAccount;
+            
+            if (!$businessAccount || !$businessAccount->access_token) {
+                return redirect()->back()->with('error', 'No valid access token found for the business account.');
+            }
+
+            // Subscribe page to webhook with leadgen field
+            $response = \Illuminate\Support\Facades\Http::post("https://graph.facebook.com/v18.0/{$page->facebook_page_id}/subscribed_apps", [
+                'subscribed_fields' => 'leadgen',
+                'access_token' => $page->page_access_token ?: $businessAccount->access_token,
+            ]);
+
+            if ($response->successful()) {
+                $page->update([
+                    'webhook_subscribed' => true,
+                    'webhook_subscribed_at' => now(),
+                    'webhook_subscribed_fields' => ['leadgen']
+                ]);
+
+                return redirect()->back()->with('success', "Successfully subscribed {$page->page_name} to webhook for real-time leads!");
+            } else {
+                $errorData = $response->json();
+                $errorMessage = $errorData['error']['message'] ?? 'Unknown error occurred';
+                return redirect()->back()->with('error', "Failed to subscribe page to webhook: {$errorMessage}");
+            }
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Failed to subscribe page to webhook: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Unsubscribe Page from Webhook
+     */
+    public function unsubscribePageFromWebhook(FacebookPage $page)
+    {
+        try {
+            $businessAccount = $page->facebookBusinessAccount;
+            
+            if (!$businessAccount || !$businessAccount->access_token) {
+                return redirect()->back()->with('error', 'No valid access token found for the business account.');
+            }
+
+            // Unsubscribe page from webhook
+            $response = \Illuminate\Support\Facades\Http::delete("https://graph.facebook.com/v18.0/{$page->facebook_page_id}/subscribed_apps", [
+                'access_token' => $page->page_access_token ?: $businessAccount->access_token,
+            ]);
+
+            if ($response->successful() || $response->status() === 400) { // 400 might mean already unsubscribed
+                $page->update([
+                    'webhook_subscribed' => false,
+                    'webhook_subscribed_at' => null,
+                    'webhook_subscribed_fields' => null
+                ]);
+
+                return redirect()->back()->with('success', "Successfully unsubscribed {$page->page_name} from webhook!");
+            } else {
+                $errorData = $response->json();
+                $errorMessage = $errorData['error']['message'] ?? 'Unknown error occurred';
+                return redirect()->back()->with('error', "Failed to unsubscribe page from webhook: {$errorMessage}");
+            }
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Failed to unsubscribe page from webhook: ' . $e->getMessage());
         }
     }
 

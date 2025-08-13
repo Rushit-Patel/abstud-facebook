@@ -69,6 +69,58 @@
                     </form>
                 </div>
             @else
+                <!-- Webhook Status Overview -->
+                @php
+                    $subscribedPages = $pages->where('webhook_subscribed', true);
+                    $unsubscribedPages = $pages->where('webhook_subscribed', false);
+                @endphp
+                
+                @if($pages->count() > 0)
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Webhook Status Overview</h3>
+                            <a href="{{ route('facebook.webhook-settings') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                Webhook Settings →
+                            </a>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600 text-sm">Total Pages</span>
+                                    <span class="text-2xl font-bold text-gray-900">{{ $pages->count() }}</span>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-green-700 text-sm">Subscribed</span>
+                                    <span class="text-2xl font-bold text-green-700">{{ $subscribedPages->count() }}</span>
+                                </div>
+                            </div>
+                            <div class="bg-orange-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-orange-700 text-sm">Not Subscribed</span>
+                                    <span class="text-2xl font-bold text-orange-700">{{ $unsubscribedPages->count() }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($unsubscribedPages->count() > 0)
+                            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.5 0L4.268 6.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    <div>
+                                        <h4 class="text-yellow-800 font-medium">Real-time Lead Notifications</h4>
+                                        <p class="text-yellow-700 text-sm mt-1">{{ $unsubscribedPages->count() }} page(s) are not subscribed to webhook. Subscribe them to receive real-time lead notifications as soon as someone submits a form.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
                 <!-- Pages List -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     @foreach($pages as $page)
@@ -105,6 +157,21 @@
                                     <span class="font-medium">{{ $page->facebookLeadForms->where('is_active', true)->count() }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Webhook Status:</span>
+                                    <span class="flex items-center gap-1">
+                                        <div class="w-2 h-2 rounded-full {{ $page->webhook_subscribed ? 'bg-green-500' : 'bg-gray-400' }}"></div>
+                                        <span class="font-medium text-xs {{ $page->webhook_subscribed ? 'text-green-700' : 'text-gray-500' }}">
+                                            {{ $page->webhook_subscribed ? 'Subscribed' : 'Not Subscribed' }}
+                                        </span>
+                                    </span>
+                                </div>
+                                @if($page->webhook_subscribed && $page->webhook_subscribed_at)
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Subscribed:</span>
+                                    <span class="font-medium text-xs">{{ $page->webhook_subscribed_at->format('M d, Y') }}</span>
+                                </div>
+                                @endif
+                                <div class="flex items-center justify-between text-sm">
                                     <span class="text-gray-600">Created:</span>
                                     <span class="font-medium">{{ $page->created_at->format('M d, Y') }}</span>
                                 </div>
@@ -126,10 +193,44 @@
                                         </button>
                                     </form>
                                 </div>
-                                @if($page->facebookLeadForms->count() > 0)
-                                    <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="block bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">
-                                        View Lead Forms ({{ $page->facebookLeadForms->count() }})
-                                    </a>
+
+                                <!-- Webhook Subscription Actions -->
+                                <div class="flex gap-2">
+                                    @if($page->webhook_subscribed)
+                                        <form action="{{ route('facebook.pages.unsubscribe', $page) }}" method="POST" class="flex-1" onsubmit="return confirm('Are you sure you want to unsubscribe from webhook? You will stop receiving real-time leads.')">
+                                            @csrf
+                                            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
+                                                Unsubscribe Webhook
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('facebook.pages.subscribe', $page) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
+                                                Subscribe Webhook
+                                            </button>
+                                        </form>
+                                    @endif
+                                    
+                                    @if($page->facebookLeadForms->count() > 0)
+                                        <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="flex-1 block bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">
+                                            Forms ({{ $page->facebookLeadForms->count() }})
+                                        </a>
+                                    @endif
+                                </div>
+
+                                @if(!$page->webhook_subscribed)
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                                        <div class="flex items-start gap-2">
+                                            <svg class="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.5 0L4.268 6.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                            </svg>
+                                            <div class="text-sm">
+                                                <p class="text-yellow-800 font-medium">Webhook Required</p>
+                                                <p class="text-yellow-700">Subscribe to webhook to receive real-time leads from this page.</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
                         </div>
