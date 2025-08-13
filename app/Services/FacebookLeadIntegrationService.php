@@ -335,9 +335,9 @@ class FacebookLeadIntegrationService
             ->where('fp.facebook_business_account_id', $businessAccountId)
             ->selectRaw('
                 COUNT(*) as total_leads,
-                COUNT(CASE WHEN status = "processed" THEN 1 END) as processed,
-                COUNT(CASE WHEN status = "failed" THEN 1 END) as failed,
-                COUNT(CASE WHEN status = "new" THEN 1 END) as new_leads
+                COUNT(CASE WHEN fl.status = "processed" THEN 1 END) as processed,
+                COUNT(CASE WHEN fl.status = "failed" THEN 1 END) as failed,
+                COUNT(CASE WHEN fl.status = "new" THEN 1 END) as new_leads
             ')
             ->first();
 
@@ -385,18 +385,53 @@ class FacebookLeadIntegrationService
     public function syncPagesFromFacebook($businessAccount): array
     {
         try {
-            // Initialize Facebook SDK or HTTP client
             $accessToken = $businessAccount->access_token;
             $businessId = $businessAccount->facebook_business_id;
             
-            // Call Facebook Graph API to get pages
-            $response = $this->callFacebookApi("/{$businessId}/owned_pages", $accessToken, [
-                'fields' => 'id,name,access_token,category,fan_count,is_published,picture{url}',
+            // First, let's check what permissions and info we have with this token
+            $tokenInfo = $this->callFacebookApi("/me", $accessToken, [
+                'fields' => 'id,name,permissions{permission,status}'
+            ]);
+            
+            if ($tokenInfo['success']) {
+                Log::info('Facebook Token Info', [
+                    'user_id' => $tokenInfo['data']['id'] ?? 'unknown',
+                    'user_name' => $tokenInfo['data']['name'] ?? 'unknown',
+                    'permissions' => $tokenInfo['data']['permissions']['data'] ?? []
+                ]);
+            }
+            
+            // Try to get pages the user manages (most common case)
+            $response = $this->callFacebookApi("/me/accounts", $accessToken, [
+                'fields' => 'id,name,access_token,category,fan_count,picture{url}',
                 'limit' => 100
             ]);
 
+            // If that fails, try getting pages from business account (if business_id is provided)
+            if (!$response['success'] && !empty($businessId)) {
+                $response = $this->callFacebookApi("/{$businessId}/client_pages", $accessToken, [
+                    'fields' => 'id,name,access_token,category,fan_count,picture{url}',
+                    'limit' => 100
+                ]);
+            }
+
+            // If still no success, try just getting user's basic page access
             if (!$response['success']) {
-                return $response;
+                $response = $this->callFacebookApi("/me", $accessToken, [
+                    'fields' => 'accounts{id,name,access_token,category,fan_count,picture{url}}',
+                ]);
+                
+                // Restructure the response to match expected format
+                if ($response['success'] && isset($response['data']['accounts'])) {
+                    $response['data'] = ['data' => $response['data']['accounts']['data'] ?? []];
+                }
+            }
+
+            if (!$response['success']) {
+                return [
+                    'success' => false,
+                    'error' => 'Unable to fetch pages. Please ensure you have the correct permissions and access token. ' . $response['error']
+                ];
             }
 
             $pagesData = $response['data']['data'] ?? [];
@@ -409,11 +444,11 @@ class FacebookLeadIntegrationService
                     'facebook_page_id' => $pageData['id'],
                 ], [
                     'page_name' => $pageData['name'],
-                    'page_category' => $pageData['category'] ?? null,
+                    'page_category' => $pageData['category'] ?? 'Page',
                     'fan_count' => $pageData['fan_count'] ?? 0,
                     'page_access_token' => $pageData['access_token'] ?? null,
                     'profile_picture_url' => $pageData['picture']['data']['url'] ?? null,
-                    'is_published' => $pageData['is_published'] ?? false,
+                    'is_published' => true, // Assume published if we can access it
                     'is_active' => true,
                 ]);
 
@@ -533,8 +568,24 @@ class FacebookLeadIntegrationService
             $responseData = json_decode($response, true);
 
             if ($httpCode !== 200) {
-                $errorMessage = $responseData['error']['message'] ?? 'Unknown Facebook API error';
-                throw new Exception("Facebook API Error ({$httpCode}): {$errorMessage}");
+                $errorMessage = 'Unknown Facebook API error';
+                $errorCode = 'unknown';
+                
+                if (isset($responseData['error'])) {
+                    $errorMessage = $responseData['error']['message'] ?? $errorMessage;
+                    $errorCode = $responseData['error']['code'] ?? $errorCode;
+                }
+
+                // Provide helpful error messages for common issues
+                $helpfulMessage = $errorMessage;
+                if ($errorCode == 100) {
+                    $helpfulMessage .= "\n\nPossible solutions:\n";
+                    $helpfulMessage .= "- Ensure your access token has 'pages_manage_metadata' permission\n";
+                    $helpfulMessage .= "- Make sure you're using a User Access Token, not an App Access Token\n";
+                    $helpfulMessage .= "- Check that the business ID is correct (if using business account)";
+                }
+
+                throw new Exception("Facebook API Error ({$httpCode}): {$helpfulMessage}");
             }
 
             return [
@@ -546,7 +597,8 @@ class FacebookLeadIntegrationService
         } catch (Exception $e) {
             Log::error('Facebook API call failed', [
                 'endpoint' => $endpoint,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'params' => array_keys($params) // Log param keys, not values for security
             ]);
 
             return [
