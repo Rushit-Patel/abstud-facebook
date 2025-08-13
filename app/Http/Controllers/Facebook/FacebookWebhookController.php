@@ -110,7 +110,7 @@ class FacebookWebhookController extends Controller
 
         Log::info('Processing webhook entry', [
             'page_id' => $pageId,
-            'changes_count' => count($changes),
+            'changes_count' => count(value: $changes),
         ]);
 
         foreach ($changes as $change) {
