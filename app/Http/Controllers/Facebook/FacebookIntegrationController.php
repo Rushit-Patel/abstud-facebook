@@ -10,8 +10,8 @@ use App\Models\FacebookLeadForm;
 use App\Models\FacebookLead;
 use App\Models\FacebookParameterMapping;
 use App\Models\FacebookCustomFieldMapping;
-use App\Models\FacebookWebhookSetting;
 use App\Services\FacebookLeadIntegrationService;
+use App\Services\TemplateVariableService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -284,8 +284,12 @@ class FacebookIntegrationController extends Controller
      */
     public function mappings(FacebookLeadForm $leadForm)
     {
-        // Redirect to dashboard since we don't have detailed views yet
-        return redirect()->route('facebook.dashboard')->with('info', 'Parameter mappings are configurable in the dashboard');
+        $leadForm->load(['facebookPage', 'facebookParameterMappings']);
+        
+        // Get system variables from TemplateVariableService
+        $systemVariables = TemplateVariableService::getAllVariables();
+        
+        return view('team.facebook.lead-forms.mappings', compact('leadForm', 'systemVariables'));
     }
 
     /**
@@ -344,8 +348,12 @@ class FacebookIntegrationController extends Controller
      */
     public function customMappings(FacebookLeadForm $leadForm)
     {
-        // Redirect to dashboard since we don't have detailed views yet
-        return redirect()->route('facebook.dashboard')->with('info', 'Custom field mappings are configurable in the dashboard');
+        $leadForm->load(['facebookPage', 'facebookCustomFieldMappings']);
+        
+        // Get system variables from TemplateVariableService
+        $systemVariables = TemplateVariableService::getAllVariables();
+        
+        return view('team.facebook.lead-forms.custom-mappings', compact('leadForm', 'systemVariables'));
     }
 
     /**
@@ -482,42 +490,19 @@ class FacebookIntegrationController extends Controller
      */
     public function webhookSettings()
     {
-        // Redirect to dashboard since we don't have detailed views yet
-        return redirect()->route('facebook.dashboard')->with('info', 'Webhook settings are configurable in the dashboard');
+        $webhookUrl = config('services.facebook.webhook.url');
+        $verifyToken = config('services.facebook.webhook.verify_token');
+        $isConfigured = !empty($webhookUrl) && !empty($verifyToken);
+        
+        return view('team.facebook.webhook-settings', compact('webhookUrl', 'verifyToken', 'isConfigured'));
     }
 
     /**
-     * Save Webhook Settings
+     * Save Webhook Settings - Not needed since it's in config/env
      */
     public function saveWebhookSettings(Request $request)
     {
-        $request->validate([
-            'webhook_url' => 'required|url',
-            'verify_token' => 'required|string',
-        ]);
-
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        if (!$businessAccount) {
-            return redirect()->back()->with('error', 'No business account found.');
-        }
-
-        try {
-            $businessAccount->webhookSettings()->updateOrCreate(
-                ['facebook_business_account_id' => $businessAccount->id],
-                [
-                    'webhook_url' => $request->webhook_url,
-                    'verify_token' => $request->verify_token,
-                    'is_active' => true,
-                ]
-            );
-
-            return redirect()->back()->with('success', 'Webhook settings saved successfully!');
-
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Failed to save webhook settings: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('info', 'Webhook settings are configured via environment variables. Please update your .env file.');
     }
 
     /**
@@ -525,25 +510,24 @@ class FacebookIntegrationController extends Controller
      */
     public function testWebhook()
     {
-        // Here you would implement webhook testing logic
-        return redirect()->back()->with('success', 'Webhook test completed successfully!');
+        $webhookUrl = config('services.facebook.webhook.url');
+        $verifyToken = config('services.facebook.webhook.verify_token');
+        
+        if (!$webhookUrl || !$verifyToken) {
+            return redirect()->back()->with('error', 'Webhook not configured. Please set FACEBOOK_WEBHOOK_URL and FACEBOOK_WEBHOOK_VERIFY_TOKEN in your .env file.');
+        }
+        
+        // Test the webhook URL
+        $fullWebhookUrl = url($webhookUrl);
+        return redirect()->back()->with('success', "Webhook URL: {$fullWebhookUrl} - Configuration is valid!");
     }
 
     /**
-     * Regenerate Webhook Token
+     * Regenerate Webhook Token - Not needed since it's in env
      */
     public function regenerateWebhookToken()
     {
-        $branchId = Auth::user()->branch_id ?? 1;
-        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
-
-        if (!$businessAccount || !$businessAccount->webhookSettings) {
-            return redirect()->back()->with('error', 'No webhook settings found.');
-        }
-
-        $newToken = $businessAccount->webhookSettings->regenerateVerifyToken();
-
-        return redirect()->back()->with('success', 'Webhook token regenerated successfully!');
+        return redirect()->back()->with('info', 'Webhook token is configured via environment variables. Please update FACEBOOK_WEBHOOK_VERIFY_TOKEN in your .env file.');
     }
 
     /**
@@ -562,6 +546,17 @@ class FacebookIntegrationController extends Controller
     {
         // Implement general settings save logic
         return redirect()->back()->with('success', 'Settings saved successfully!');
+    }
+
+    /**
+     * System Variables Reference
+     */
+    public function systemVariables()
+    {
+        $systemVariables = TemplateVariableService::getAllVariables();
+        $sampleValues = TemplateVariableService::getSampleValues();
+        
+        return view('team.facebook.system-variables', compact('systemVariables', 'sampleValues'));
     }
 
     /**
@@ -609,5 +604,20 @@ class FacebookIntegrationController extends Controller
     {
         // Implement connection testing logic
         return response()->json(['success' => true, 'message' => 'Connection test successful']);
+    }
+
+    /**
+     * AJAX: Get System Variables
+     */
+    public function getSystemVariables()
+    {
+        $systemVariables = TemplateVariableService::getAllVariables();
+        $sampleValues = TemplateVariableService::getSampleValues();
+        
+        return response()->json([
+            'success' => true,
+            'variables' => $systemVariables,
+            'sample_values' => $sampleValues
+        ]);
     }
 }

@@ -43,11 +43,6 @@ class FacebookBusinessAccount extends Model
         return $this->hasMany(FacebookPage::class);
     }
 
-    public function webhookSettings(): HasOne
-    {
-        return $this->hasOne(FacebookWebhookSetting::class);
-    }
-
     // Scopes
     public function scopeConnected($query)
     {

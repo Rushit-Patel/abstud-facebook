@@ -39,6 +39,10 @@ return [
         'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => env('FACEBOOK_REDIRECT_URL'),
+        'webhook' => [
+            'verify_token' => env('FACEBOOK_WEBHOOK_VERIFY_TOKEN'),
+            'url' => env('FACEBOOK_WEBHOOK_URL', '/facebook/webhook'),
+        ],
     ],
 
 ];

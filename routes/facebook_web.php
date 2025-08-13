@@ -75,8 +75,12 @@ Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('f
     Route::get('settings', [FacebookIntegrationController::class, 'settings'])->name('settings');
     Route::post('settings', [FacebookIntegrationController::class, 'saveSettings'])->name('settings.save');
     
+    // System Variables Reference
+    Route::get('system-variables', [FacebookIntegrationController::class, 'systemVariables'])->name('system-variables');
+    
     // AJAX Routes for dynamic data
     Route::get('api/stats', [FacebookIntegrationController::class, 'getStats'])->name('api.stats');
     Route::get('api/recent-leads', [FacebookIntegrationController::class, 'getRecentLeads'])->name('api.recent-leads');
+    Route::get('api/system-variables', [FacebookIntegrationController::class, 'getSystemVariables'])->name('api.system-variables');
     Route::post('api/test-connection', [FacebookIntegrationController::class, 'testConnection'])->name('api.test-connection');
 });

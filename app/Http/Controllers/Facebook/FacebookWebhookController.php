@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Facebook;
 
 use App\Http\Controllers\Controller;
-use App\Models\FacebookWebhookSetting;
 use App\Services\FacebookLeadIntegrationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -39,20 +38,18 @@ class FacebookWebhookController extends Controller
             return response('Invalid hub mode', 400);
         }
 
-        // Find webhook setting with matching verify token
-        $webhookSetting = FacebookWebhookSetting::where('verify_token', $hubVerifyToken)
-            ->where('is_active', true)
-            ->first();
+        // Get verify token from configuration
+        $configuredVerifyToken = config('services.facebook.webhook.verify_token');
 
-        if (!$webhookSetting) {
+        if (!$configuredVerifyToken || $hubVerifyToken !== $configuredVerifyToken) {
             Log::warning('Invalid verify token for webhook verification', [
-                'provided_token' => $hubVerifyToken
+                'provided_token' => $hubVerifyToken,
+                'configured_token_exists' => !empty($configuredVerifyToken)
             ]);
             return response('Invalid verify token', 403);
         }
 
         Log::info('Facebook webhook verification successful', [
-            'business_account_id' => $webhookSetting->facebook_business_account_id,
             'hub_challenge' => $hubChallenge,
         ]);
 
