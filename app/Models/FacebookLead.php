@@ -41,27 +41,27 @@ class FacebookLead extends Model
     // Scopes
     public function scopeNew($query)
     {
-        return $query->where('status', 'new');
+        return $query->where('facebook_leads.status', 'new');
     }
 
     public function scopeProcessed($query)
     {
-        return $query->where('status', 'processed');
+        return $query->where('facebook_leads.status', 'processed');
     }
 
     public function scopeFailed($query)
     {
-        return $query->where('status', 'failed');
+        return $query->where('facebook_leads.status', 'failed');
     }
 
     public function scopeRecent($query)
     {
-        return $query->orderBy('facebook_created_time', 'desc');
+        return $query->orderBy('facebook_leads.facebook_created_time', 'desc');
     }
 
     public function scopeToday($query)
     {
-        return $query->whereDate('facebook_created_time', today());
+        return $query->whereDate('facebook_leads.facebook_created_time', today());
     }
 
     // Helper Methods
