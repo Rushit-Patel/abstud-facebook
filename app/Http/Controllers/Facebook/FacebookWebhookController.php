@@ -86,18 +86,15 @@ class FacebookWebhookController extends Controller
             foreach ($data['entry'] ?? [] as $entry) {
                 $this->processWebhookEntry($entry);
             }
-
-            return response('OK', 200);
-
         } catch (Exception $e) {
             Log::error('Error processing Facebook webhook', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'request_data' => $request->all(),
             ]);
-
-            return response('Internal Server Error', 500);
         }
+        return response('OK', 200);
+
     }
 
     /**

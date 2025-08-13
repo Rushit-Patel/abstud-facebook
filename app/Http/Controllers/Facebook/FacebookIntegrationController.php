@@ -531,6 +531,9 @@ class FacebookIntegrationController extends Controller
             $q->where('branch_id', $branchId);
         })->with(['facebookLeadForm.facebookPage', 'facebookLeadSource']);
 
+        // Store base query for statistics before applying filters
+        $statsQuery = clone $query;
+
         // Apply filters
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -546,7 +549,46 @@ class FacebookIntegrationController extends Controller
 
         $leads = $query->orderBy('facebook_created_time', 'desc')->paginate(20);
 
-        return view('team.facebook.leads', compact('leads'));
+        // Get business account for sync functionality
+        $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
+
+        // Calculate statistics for all leads (unfiltered)
+        $stats = [
+            'total' => $statsQuery->count(),
+            'processed' => $statsQuery->where('status', 'processed')->count(),
+            'pending' => $statsQuery->where('status', 'pending')->count(),
+            'failed' => $statsQuery->where('status', 'failed')->count(),
+        ];
+
+        return view('team.facebook.leads', compact('leads', 'businessAccount', 'stats'));
+    }
+
+    /**
+     * Sync Leads from Facebook
+     */
+    public function syncLeads()
+    {
+        try {
+            $branchId = Auth::user()->branch_id ?? 1;
+            $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
+
+            if (!$businessAccount) {
+                return redirect()->back()->with('error', 'No business account found. Please connect your Facebook business account first.');
+            }
+
+            $result = $this->integrationService->syncLeadsFromFacebook($businessAccount);
+
+            if ($result['success']) {
+                return redirect()->back()
+                    ->with('success', $result['message']);
+            } else {
+                return redirect()->back()
+                    ->with('error', 'Failed to sync leads: ' . $result['error']);
+            }
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Failed to sync leads: ' . $e->getMessage());
+        }
     }
 
     /**

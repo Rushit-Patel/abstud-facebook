@@ -60,6 +60,7 @@ Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('f
     
     // Lead Management
     Route::get('leads', [FacebookIntegrationController::class, 'leads'])->name('leads');
+    Route::post('leads/sync', [FacebookIntegrationController::class, 'syncLeads'])->name('leads.sync');
     Route::get('leads/{lead}', [FacebookIntegrationController::class, 'showLead'])->name('leads.show');
     Route::post('leads/{lead}/retry', [FacebookIntegrationController::class, 'retryLead'])->name('leads.retry');
     Route::post('leads/{lead}/mark-processed', [FacebookIntegrationController::class, 'markProcessed'])->name('leads.mark-processed');

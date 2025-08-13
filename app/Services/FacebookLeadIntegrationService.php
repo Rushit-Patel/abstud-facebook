@@ -7,7 +7,9 @@ use App\Models\FacebookLeadForm;
 use App\Models\FacebookParameterMapping;
 use App\Models\FacebookCustomFieldMapping;
 use App\Models\FacebookLeadSource;
+use App\Models\FacebookBusinessAccount;
 use App\Models\ClientLead; // Your existing lead model
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -529,6 +531,127 @@ class FacebookLeadIntegrationService
             Log::error('Facebook lead forms sync failed', [
                 'error' => $e->getMessage(),
                 'page_id' => $page->id
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Sync Leads from Facebook Graph API for all active lead forms
+     */
+    public function syncLeadsFromFacebook(FacebookBusinessAccount $businessAccount): array
+    {
+        try {
+            if (!$businessAccount->access_token) {
+                throw new Exception('No access token available for business account');
+            }
+
+            $syncedCount = 0;
+            $totalProcessed = 0;
+
+            // Get all active lead forms for this business account
+            $leadForms = FacebookLeadForm::whereHas('facebookPage', function ($query) use ($businessAccount) {
+                $query->where('facebook_business_account_id', $businessAccount->id);
+            })->where('is_active', true)->get();
+
+            foreach ($leadForms as $leadForm) {
+                try {
+                    // Get leads for this lead form from Facebook
+                    $response = Http::get("https://graph.facebook.com/v18.0/{$leadForm->facebook_lead_form_id}/leads", [
+                        'access_token' => $businessAccount->access_token,
+                        'fields' => 'id,created_time,field_data',
+                        'limit' => 100, // Facebook's max limit
+                    ]);
+
+                    if ($response->successful()) {
+                        $data = $response->json();
+                        $leads = $data['data'] ?? [];
+
+                        foreach ($leads as $leadData) {
+                            $totalProcessed++;
+                            
+                            // Check if lead already exists
+                            $existingLead = FacebookLead::where('facebook_lead_id', $leadData['id'])->first();
+                            
+                            if (!$existingLead) {
+                                // Create new lead
+                                FacebookLead::create([
+                                    'facebook_lead_form_id' => $leadForm->id,
+                                    'facebook_lead_id' => $leadData['id'],
+                                    'facebook_created_time' => $leadData['created_time'],
+                                    'field_data' => $leadData['field_data'] ?? [],
+                                    'raw_data' => $leadData,
+                                    'status' => 'pending',
+                                    'processing_attempts' => 0
+                                ]);
+                                
+                                $syncedCount++;
+                            }
+                        }
+
+                        // Handle pagination if there are more leads
+                        while (isset($data['paging']['next'])) {
+                            $nextResponse = Http::get($data['paging']['next']);
+                            if ($nextResponse->successful()) {
+                                $data = $nextResponse->json();
+                                $leads = $data['data'] ?? [];
+
+                                foreach ($leads as $leadData) {
+                                    $totalProcessed++;
+                                    
+                                    $existingLead = FacebookLead::where('facebook_lead_id', $leadData['id'])->first();
+                                    
+                                    if (!$existingLead) {
+                                        FacebookLead::create([
+                                            'facebook_lead_form_id' => $leadForm->id,
+                                            'facebook_lead_id' => $leadData['id'],
+                                            'facebook_created_time' => $leadData['created_time'],
+                                            'field_data' => $leadData['field_data'] ?? [],
+                                            'raw_data' => $leadData,
+                                            'status' => 'pending',
+                                            'processing_attempts' => 0
+                                        ]);
+                                        
+                                        $syncedCount++;
+                                    }
+                                }
+                            } else {
+                                break; // Stop if pagination request fails
+                            }
+                        }
+
+                    } else {
+                        Log::warning('Failed to sync leads for form', [
+                            'form_id' => $leadForm->id,
+                            'facebook_form_id' => $leadForm->facebook_lead_form_id,
+                            'response' => $response->body()
+                        ]);
+                    }
+
+                } catch (Exception $e) {
+                    Log::error('Error syncing leads for form', [
+                        'form_id' => $leadForm->id,
+                        'error' => $e->getMessage()
+                    ]);
+                    continue; // Continue with next form
+                }
+            }
+
+            return [
+                'success' => true,
+                'count' => $syncedCount,
+                'total_processed' => $totalProcessed,
+                'message' => "Successfully synced {$syncedCount} new leads (processed {$totalProcessed} total)"
+            ];
+
+        } catch (Exception $e) {
+            Log::error('Facebook leads sync failed', [
+                'error' => $e->getMessage(),
+                'business_account_id' => $businessAccount->id
             ]);
 
             return [

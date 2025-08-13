@@ -23,6 +23,17 @@
                     </div>
                 </div>
                 <div class="flex gap-2">
+                    @if($businessAccount)
+                        <form action="{{ route('facebook.leads.sync') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Sync Leads
+                            </button>
+                        </form>
+                    @endif
                     <a href="{{ route('facebook.lead-forms') }}" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                         Manage Forms
                     </a>
@@ -170,7 +181,15 @@
                     </div>
 
                     <!-- Pagination -->
-                    @if(method_exists($leads, 'hasPages') && $leads->hasPages())
+                    @php
+                        $showPagination = false;
+                        try {
+                            $showPagination = is_object($leads) && method_exists($leads, 'hasPages') && $leads->hasPages();
+                        } catch (Exception $e) {
+                            $showPagination = false;
+                        }
+                    @endphp
+                    @if($showPagination)
                         <div class="border-t border-gray-200 px-6 py-4">
                             {{ $leads->withQueryString()->links() }}
                         </div>
@@ -187,7 +206,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-2xl font-bold text-gray-900">{{ $leads->total() }}</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
                                 <p class="text-sm text-gray-600">Total Leads</p>
                             </div>
                         </div>
@@ -201,7 +220,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-2xl font-bold text-gray-900">{{ $leads->where('status', 'processed')->count() }}</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $stats['processed'] }}</p>
                                 <p class="text-sm text-gray-600">Processed</p>
                             </div>
                         </div>
@@ -215,7 +234,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-2xl font-bold text-gray-900">{{ $leads->where('status', 'pending')->count() }}</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $stats['pending'] }}</p>
                                 <p class="text-sm text-gray-600">Pending</p>
                             </div>
                         </div>
@@ -229,7 +248,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-2xl font-bold text-gray-900">{{ $leads->where('status', 'failed')->count() }}</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $stats['failed'] }}</p>
                                 <p class="text-sm text-gray-600">Failed</p>
                             </div>
                         </div>
@@ -238,4 +257,36 @@
             @endif
         </div>
     </x-slot>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle sync button click
+            const syncForm = document.querySelector('form[action*="leads/sync"]');
+            if (syncForm) {
+                syncForm.addEventListener('submit', function(e) {
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.innerHTML;
+                    
+                    // Disable button and show loading state
+                    button.disabled = true;
+                    button.innerHTML = `
+                        <svg class="w-4 h-4 inline mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Syncing...
+                    `;
+                    
+                    // Re-enable button if the form submission fails or gets interrupted
+                    setTimeout(() => {
+                        if (button.disabled) {
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                        }
+                    }, 30000); // 30 second timeout
+                });
+            }
+        });
+    </script>
+    @endpush
 </x-team.layout.app>
