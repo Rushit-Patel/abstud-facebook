@@ -16,11 +16,17 @@ class FacebookPage extends Model
         'page_name',
         'facebook_page_id',
         'page_access_token',
+        'page_category',
+        'fan_count',
+        'profile_picture_url',
+        'is_published',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_published' => 'boolean',
+        'fan_count' => 'integer',
     ];
 
     protected $hidden = [

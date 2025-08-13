@@ -159,6 +159,81 @@
                         </x-team.card>
                     </div>
 
+                    <!-- Facebook Pages Overview -->
+                    @if($pages->isNotEmpty())
+                    <x-team.card title="Facebook Pages" titleClass="text-lg font-semibold">
+                        <x-slot name="header">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900">Facebook Pages</h3>
+                                <div class="flex items-center gap-2">
+                                    <form action="{{ route('facebook.business-account.sync-pages') }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            Sync Pages
+                                        </button>
+                                    </form>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="{{ route('facebook.pages') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        View All
+                                    </a>
+                                </div>
+                            </div>
+                        </x-slot>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach($pages as $page)
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-start gap-3">
+                                        @if($page->profile_picture_url)
+                                            <img src="{{ $page->profile_picture_url }}" alt="{{ $page->page_name }}" class="w-12 h-12 rounded-lg object-cover">
+                                        @else
+                                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="font-medium text-gray-900 truncate">{{ $page->page_name }}</h4>
+                                                <span class="flex-shrink-0 w-3 h-3 {{ $page->is_active ? 'bg-green-500' : 'bg-gray-300' }} rounded-full"></span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mt-1">{{ $page->page_category ?? 'Facebook Page' }}</p>
+                                            <div class="flex items-center justify-between mt-2">
+                                                <div class="flex items-center gap-4 text-xs text-gray-500">
+                                                    @if($page->fan_count)
+                                                        <span>{{ number_format($page->fan_count) }} followers</span>
+                                                    @endif
+                                                    <span>{{ $page->facebook_lead_forms_count }} forms</span>
+                                                </div>
+                                                <a href="{{ route('facebook.pages') }}?page_id={{ $page->id }}" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                                                    View →
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        @if($pages->count() === 0)
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                <p class="text-gray-600 mb-2">No Facebook pages found</p>
+                                <p class="text-sm text-gray-500 mb-4">Sync your Facebook pages to start managing lead forms</p>
+                                <form action="{{ route('facebook.business-account.sync-pages') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
+                                        Sync Pages Now
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    </x-team.card>
+                    @endif
+
                     <!-- Recent Leads and Quick Actions -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Recent Leads -->
@@ -243,6 +318,18 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
                                             <span class="font-medium text-gray-900">Lead Forms</span>
+                                        </div>
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+
+                                    <a href="{{ route('facebook.pages') }}" class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                            </svg>
+                                            <span class="font-medium text-gray-900">Facebook Pages</span>
                                         </div>
                                         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

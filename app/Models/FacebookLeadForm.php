@@ -16,11 +16,20 @@ class FacebookLeadForm extends Model
         'form_name',
         'facebook_form_id',
         'form_description',
+        'status',
+        'leads_count',
+        'questions',
+        'privacy_policy_url',
+        'follow_up_action_url',
+        'facebook_created_time',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'leads_count' => 'integer',
+        'questions' => 'array',
+        'facebook_created_time' => 'datetime',
     ];
 
     // Relationships

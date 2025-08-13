@@ -378,4 +378,181 @@ class FacebookLeadIntegrationService
             ->today()
             ->count();
     }
+
+    /**
+     * Sync Facebook Pages from Facebook Graph API
+     */
+    public function syncPagesFromFacebook($businessAccount): array
+    {
+        try {
+            // Initialize Facebook SDK or HTTP client
+            $accessToken = $businessAccount->access_token;
+            $businessId = $businessAccount->facebook_business_id;
+            
+            // Call Facebook Graph API to get pages
+            $response = $this->callFacebookApi("/{$businessId}/owned_pages", $accessToken, [
+                'fields' => 'id,name,access_token,category,fan_count,is_published,picture{url}',
+                'limit' => 100
+            ]);
+
+            if (!$response['success']) {
+                return $response;
+            }
+
+            $pagesData = $response['data']['data'] ?? [];
+            $syncedCount = 0;
+
+            foreach ($pagesData as $pageData) {
+                // Update or create Facebook page record
+                $page = \App\Models\FacebookPage::updateOrCreate([
+                    'facebook_business_account_id' => $businessAccount->id,
+                    'facebook_page_id' => $pageData['id'],
+                ], [
+                    'page_name' => $pageData['name'],
+                    'page_category' => $pageData['category'] ?? null,
+                    'fan_count' => $pageData['fan_count'] ?? 0,
+                    'page_access_token' => $pageData['access_token'] ?? null,
+                    'profile_picture_url' => $pageData['picture']['data']['url'] ?? null,
+                    'is_published' => $pageData['is_published'] ?? false,
+                    'is_active' => true,
+                ]);
+
+                $syncedCount++;
+            }
+
+            return [
+                'success' => true,
+                'count' => $syncedCount,
+                'message' => "Successfully synced {$syncedCount} pages"
+            ];
+
+        } catch (Exception $e) {
+            Log::error('Facebook pages sync failed', [
+                'error' => $e->getMessage(),
+                'business_account_id' => $businessAccount->id
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Sync Lead Forms from Facebook Graph API for a specific page
+     */
+    public function syncLeadFormsFromFacebook($page): array
+    {
+        try {
+            $accessToken = $page->page_access_token ?: $page->facebookBusinessAccount->access_token;
+            
+            if (!$accessToken) {
+                throw new Exception('No access token available for page');
+            }
+
+            // Call Facebook Graph API to get lead forms for this page
+            $response = $this->callFacebookApi("/{$page->facebook_page_id}/leadgen_forms", $accessToken, [
+                'fields' => 'id,name,status,leads_count,created_time,questions,privacy_policy_url,follow_up_action_url',
+                'limit' => 100
+            ]);
+
+            if (!$response['success']) {
+                return $response;
+            }
+
+            $formsData = $response['data']['data'] ?? [];
+            $syncedCount = 0;
+
+            foreach ($formsData as $formData) {
+                // Update or create lead form record
+                $leadForm = \App\Models\FacebookLeadForm::updateOrCreate([
+                    'facebook_page_id' => $page->id,
+                    'facebook_form_id' => $formData['id'],
+                ], [
+                    'form_name' => $formData['name'],
+                    'form_description' => $formData['name'], // Facebook doesn't provide description
+                    'status' => $formData['status'] ?? 'ACTIVE',
+                    'leads_count' => $formData['leads_count'] ?? 0,
+                    'questions' => json_encode($formData['questions'] ?? []),
+                    'privacy_policy_url' => $formData['privacy_policy_url'] ?? null,
+                    'follow_up_action_url' => $formData['follow_up_action_url'] ?? null,
+                    'facebook_created_time' => $formData['created_time'] ?? now(),
+                    'is_active' => ($formData['status'] ?? 'ACTIVE') === 'ACTIVE',
+                ]);
+
+                $syncedCount++;
+            }
+
+            return [
+                'success' => true,
+                'count' => $syncedCount,
+                'message' => "Successfully synced {$syncedCount} lead forms"
+            ];
+
+        } catch (Exception $e) {
+            Log::error('Facebook lead forms sync failed', [
+                'error' => $e->getMessage(),
+                'page_id' => $page->id
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Call Facebook Graph API
+     */
+    private function callFacebookApi(string $endpoint, string $accessToken, array $params = []): array
+    {
+        try {
+            $url = 'https://graph.facebook.com/v18.0' . $endpoint;
+            $params['access_token'] = $accessToken;
+
+            $ch = curl_init();
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $url . '?' . http_build_query($params),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_FOLLOWLOCATION => true,
+            ]);
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
+
+            if ($error) {
+                throw new Exception("CURL Error: {$error}");
+            }
+
+            $responseData = json_decode($response, true);
+
+            if ($httpCode !== 200) {
+                $errorMessage = $responseData['error']['message'] ?? 'Unknown Facebook API error';
+                throw new Exception("Facebook API Error ({$httpCode}): {$errorMessage}");
+            }
+
+            return [
+                'success' => true,
+                'data' => $responseData,
+                'http_code' => $httpCode
+            ];
+
+        } catch (Exception $e) {
+            Log::error('Facebook API call failed', [
+                'endpoint' => $endpoint,
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
 }

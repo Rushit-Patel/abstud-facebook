@@ -36,11 +36,41 @@ class FacebookIntegrationController extends Controller
         $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
         
         $stats = [];
+        $pages = collect();
+        $leadForms = collect();
+        $recentLeads = collect();
+        
         if ($businessAccount) {
             $stats = $this->integrationService->getProcessingStats($businessAccount->id);
+            
+            // Get pages with lead forms count
+            $pages = $businessAccount->facebookPages()
+                ->withCount('facebookLeadForms')
+                ->where('is_active', true)
+                ->orderBy('page_name')
+                ->get();
+            
+            // Get lead forms with recent leads count
+            $leadForms = FacebookLeadForm::whereHas('facebookPage', function ($query) use ($businessAccount) {
+                $query->where('facebook_business_account_id', $businessAccount->id);
+            })
+            ->withCount('facebookLeads')
+            ->where('is_active', true)
+            ->orderBy('form_name')
+            ->limit(10)
+            ->get();
+            
+            // Get recent leads
+            $recentLeads = FacebookLead::whereHas('facebookLeadForm.facebookPage', function ($query) use ($businessAccount) {
+                $query->where('facebook_business_account_id', $businessAccount->id);
+            })
+            ->with(['facebookLeadForm.facebookPage'])
+            ->orderBy('facebook_created_time', 'desc')
+            ->limit(10)
+            ->get();
         }
 
-        return view('team.facebook.dashboard', compact('businessAccount', 'stats'));
+        return view('team.facebook.dashboard', compact('businessAccount', 'stats', 'pages', 'leadForms', 'recentLeads'));
     }
 
     /**
@@ -146,20 +176,21 @@ class FacebookIntegrationController extends Controller
             return redirect()->back()->with('error', 'No business account found.');
         }
 
-        // Here you would typically call Facebook API to get pages
-        // For now, we'll create a sample page
-        
-        try {
-            // Sample page creation (replace with actual Facebook API call)
-            FacebookPage::updateOrCreate([
-                'facebook_business_account_id' => $businessAccount->id,
-                'facebook_page_id' => 'sample_page_id_' . time(),
-            ], [
-                'page_name' => 'Sample Page',
-                'is_active' => true,
-            ]);
+        if (!$businessAccount->access_token) {
+            return redirect()->back()->with('error', 'Facebook access token not found. Please reconnect your account.');
+        }
 
-            return redirect()->route('facebook.pages')->with('success', 'Pages synced successfully!');
+        try {
+            // Call Facebook Graph API to get pages managed by the business account
+            $result = $this->integrationService->syncPagesFromFacebook($businessAccount);
+            
+            if ($result['success']) {
+                return redirect()->route('facebook.pages')
+                    ->with('success', "Successfully synced {$result['count']} Facebook pages!");
+            } else {
+                return redirect()->back()
+                    ->with('error', 'Failed to sync pages: ' . $result['error']);
+            }
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Failed to sync pages: ' . $e->getMessage());
@@ -198,17 +229,16 @@ class FacebookIntegrationController extends Controller
     public function syncLeadForms(FacebookPage $page)
     {
         try {
-            // Sample lead form creation (replace with actual Facebook API call)
-            FacebookLeadForm::updateOrCreate([
-                'facebook_page_id' => $page->id,
-                'facebook_form_id' => 'sample_form_id_' . time(),
-            ], [
-                'form_name' => 'Sample Lead Form',
-                'form_description' => 'A sample lead form from ' . $page->page_name,
-                'is_active' => true,
-            ]);
-
-            return redirect()->back()->with('success', 'Lead forms synced successfully!');
+            // Call Facebook Graph API to get lead forms for this specific page
+            $result = $this->integrationService->syncLeadFormsFromFacebook($page);
+            
+            if ($result['success']) {
+                return redirect()->back()
+                    ->with('success', "Successfully synced {$result['count']} lead forms for {$page->page_name}!");
+            } else {
+                return redirect()->back()
+                    ->with('error', 'Failed to sync lead forms: ' . $result['error']);
+            }
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Failed to sync lead forms: ' . $e->getMessage());
