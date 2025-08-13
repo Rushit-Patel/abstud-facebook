@@ -16,11 +16,11 @@ Route::middleware(['auth', 'web'])->prefix('facebook')->name('facebook.auth.')->
 });
 
 // Facebook Webhook Routes (public - no auth required)
-Route::prefix('facebook')->group(function () {
+// Route::prefix('facebook')->group(function () {
     // Webhook verification and processing
     Route::get('webhook', [FacebookWebhookController::class, 'verify'])->name('facebook.webhook.verify');
     Route::post('webhook', [FacebookWebhookController::class, 'handle'])->name('facebook.webhook.handle');
-});
+// });
 
 // Protected Facebook Integration Web Routes
 Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('facebook.')->group(function () {
