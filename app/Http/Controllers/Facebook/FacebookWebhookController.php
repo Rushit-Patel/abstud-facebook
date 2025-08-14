@@ -22,39 +22,16 @@ class FacebookWebhookController extends Controller
      */
     public function verify(Request $request)
     {
-        $hubMode = $request->query('hub_mode');
-        $hubChallenge = $request->query('hub_challenge');
-        $hubVerifyToken = $request->query('hub_verify_token');
-
-        Log::info('Facebook webhook verification attempt', [
-            'hub_mode' => $hubMode,
-            'hub_verify_token' => $hubVerifyToken,
-            'hub_challenge' => $hubChallenge,
-        ]);
-
-        // Check if the mode is 'subscribe'
-        if ($hubMode !== 'subscribe') {
-            Log::warning('Invalid hub mode for webhook verification', ['hub_mode' => $hubMode]);
-            return response('Invalid hub mode', 400);
-        }
-
         // Get verify token from configuration
         $configuredVerifyToken = config('services.facebook.webhook.verify_token');
 
-        if (!$configuredVerifyToken || $hubVerifyToken !== $configuredVerifyToken) {
-            Log::warning('Invalid verify token for webhook verification', [
-                'provided_token' => $hubVerifyToken,
-                'configured_token_exists' => !empty($configuredVerifyToken)
-            ]);
-            return response('Invalid verify token', 403);
+        $verifyToken = $configuredVerifyToken;
+
+        $challenge = $request->query('hub_challenge');
+        if ($verifyToken !== $request->query('hub_verify_token')) {
+            return response('Invalid verify token.', 400);
         }
-
-        Log::info('Facebook webhook verification successful', [
-            'hub_challenge' => $hubChallenge,
-        ]);
-
-        // Return the challenge to complete verification
-        return $request->hub_challenge;
+        return $challenge;
     }
 
     /**
@@ -62,6 +39,9 @@ class FacebookWebhookController extends Controller
      */
     public function handle(Request $request)
     {
+        if ($request->get('hub_mode') === 'subscribe' && $request->get('hub_verify_token') === env('WEBHOOK_VERIFY_TOKEN')) {
+            return $request->get('hub_challenge');
+        }
         // try {
             $data = $request->all();
 
