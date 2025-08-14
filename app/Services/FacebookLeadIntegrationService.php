@@ -9,6 +9,8 @@ use App\Models\FacebookCustomFieldMapping;
 use App\Models\FacebookLeadSource;
 use App\Models\FacebookBusinessAccount;
 use App\Models\ClientLead; // Your existing lead model
+use App\Models\ClientDetails;
+use App\Models\Source;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +55,68 @@ class FacebookLeadIntegrationService
         }
 
         return $extracted;
+    }
+
+    /**
+     * Create ClientDetails and ClientLead from Facebook lead data
+     */
+    protected function createClientDetailsAndLead(array $extractedData, FacebookLeadForm $leadForm): ?ClientLead
+    {
+        try {
+            // Get or create Facebook source
+            $facebookSource = Source::firstOrCreate(
+                ['name' => 'Facebook'],
+                ['name' => 'Facebook', 'status' => 1]
+            );
+
+            // Prepare data for ClientDetails
+            $nameParts = explode(' ', $extractedData['name'] ?? 'Unknown Unknown', 2);
+            $firstName = $nameParts[0] ?? 'Unknown';
+            $lastName = $nameParts[1] ?? 'Unknown';
+
+            $clientDetailsData = [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email_id' => $extractedData['email'] ?? null,
+                'mobile_no' => $extractedData['phone'] ?? null,
+                'whatsapp_no' => $extractedData['phone'] ?? null,
+                'source' => $facebookSource->id,
+                'country' => 1, // Default country - adjust as needed
+                'state' => 1,   // Default state - adjust as needed  
+                'city' => 1,    // Default city - adjust as needed
+                'branch' => $leadForm->facebookPage->facebookBusinessAccount->branch_id ?? 1,
+            ];
+
+            // Create ClientDetails
+            $clientDetails = ClientDetails::create($clientDetailsData);
+            $clientDetails->generateClientCode();
+
+            // Prepare data for ClientLead
+            $clientLeadData = [
+                'client_id' => $clientDetails->id,
+                'client_date' => now()->format('Y-m-d'),
+                'lead_type' => 2, // Default lead type - adjust as needed
+                'purpose' => 1,   // Default purpose - adjust as needed
+                'branch' => $leadForm->facebookPage->facebookBusinessAccount->branch_id ?? 1,
+                'assign_owner' => null, // Can be assigned later
+                'added_by' => 1, // System user or default - adjust as needed
+                'status' => 1,   // Default status - adjust as needed
+                'remark' => 'Lead automatically created from Facebook Lead Ads',
+            ];
+
+            // Create ClientLead
+            $clientLead = ClientLead::create($clientLeadData);
+
+            return $clientLead;
+
+        } catch (Exception $e) {
+            Log::error('Failed to create ClientDetails and ClientLead from Facebook lead', [
+                'error' => $e->getMessage(),
+                'extracted_data' => $extractedData,
+                'lead_form_id' => $leadForm->id
+            ]);
+            return null;
+        }
     }
 
     /**
@@ -509,8 +573,9 @@ class FacebookLeadIntegrationService
                             if (!$existingLead) {
                                 // Extract field data for easier access
                                 $extractedData = $this->extractLeadData($leadData['field_data'] ?? []);
-                                // Create new lead
-                                FacebookLead::create([
+                                
+                                // Create new FacebookLead
+                                $facebookLead = FacebookLead::create([
                                     'facebook_lead_form_id' => $leadForm->id,
                                     'facebook_lead_id' => $leadData['id'],
                                     'facebook_created_time' => $leadData['created_time'],
@@ -520,6 +585,9 @@ class FacebookLeadIntegrationService
                                     'additional_data' => $extractedData['additional_data'],
                                     'status' => 'new'
                                 ]);
+                                
+                                // Create ClientDetails and ClientLead automatically
+                                $clientLead = $this->createClientDetailsAndLead($extractedData, $leadForm);
                                 
                                 $syncedCount++;
                             }else{
@@ -550,7 +618,8 @@ class FacebookLeadIntegrationService
                                         // Extract field data for easier access
                                         $extractedData = $this->extractLeadData($leadData['field_data'] ?? []);
                                         
-                                        FacebookLead::create([
+                                        // Create new FacebookLead
+                                        $facebookLead = FacebookLead::create([
                                             'facebook_lead_form_id' => $leadForm->id,
                                             'facebook_lead_id' => $leadData['id'],
                                             'facebook_created_time' => $leadData['created_time'],
@@ -560,6 +629,9 @@ class FacebookLeadIntegrationService
                                             'additional_data' => $extractedData['additional_data'],
                                             'status' => 'new'
                                         ]);
+                                        
+                                        // Create ClientDetails and ClientLead automatically
+                                        $clientLead = $this->createClientDetailsAndLead($extractedData, $leadForm);
                                         
                                         $syncedCount++;
                                     }
