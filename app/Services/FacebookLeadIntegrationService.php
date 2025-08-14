@@ -473,7 +473,7 @@ class FacebookLeadIntegrationService
      */
     public function syncLeadsFromFacebook(FacebookBusinessAccount $businessAccount): array
     {
-        // try {
+        try {
             if (!$businessAccount->access_token) {
                 throw new Exception('No access token available for business account');
             }
@@ -497,6 +497,7 @@ class FacebookLeadIntegrationService
 
                     if ($response->successful()) {
                         $data = $response->json();
+                        
                         $leads = $data['data'] ?? [];
 
                         foreach ($leads as $leadData) {
@@ -504,11 +505,10 @@ class FacebookLeadIntegrationService
                             
                             // Check if lead already exists
                             $existingLead = FacebookLead::where('facebook_lead_id', $leadData['id'])->first();
-                            
+
                             if (!$existingLead) {
                                 // Extract field data for easier access
                                 $extractedData = $this->extractLeadData($leadData['field_data'] ?? []);
-                                
                                 // Create new lead
                                 FacebookLead::create([
                                     'facebook_lead_form_id' => $leadForm->id,
@@ -522,6 +522,15 @@ class FacebookLeadIntegrationService
                                 ]);
                                 
                                 $syncedCount++;
+                            }else{
+                                $extractedData = $this->extractLeadData($leadData['field_data'] ?? []);
+                                // Update existing lead
+                                $existingLead->update([
+                                    'name' => $extractedData['name'],
+                                    'email' => $extractedData['email'],
+                                    'phone' => $extractedData['phone'],
+                                    'additional_data' => $extractedData['additional_data'],
+                                ]);
                             }
                         }
 
@@ -584,17 +593,17 @@ class FacebookLeadIntegrationService
                 'message' => "Successfully synced {$syncedCount} new leads (processed {$totalProcessed} total)"
             ];
 
-        // } catch (Exception $e) {
-        //     Log::error('Facebook leads sync failed', [
-        //         'error' => $e->getMessage(),
-        //         'business_account_id' => $businessAccount->id
-        //     ]);
+        } catch (Exception $e) {
+            Log::error('Facebook leads sync failed', [
+                'error' => $e->getMessage(),
+                'business_account_id' => $businessAccount->id
+            ]);
 
-        //     return [
-        //         'success' => false,
-        //         'error' => $e->getMessage()
-        //     ];
-        // }
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
     }
 
     /**

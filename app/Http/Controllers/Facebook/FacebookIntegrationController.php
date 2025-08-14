@@ -529,7 +529,7 @@ class FacebookIntegrationController extends Controller
 
         $query = FacebookLead::whereHas('facebookLeadForm.facebookPage.facebookBusinessAccount', function ($q) use ($branchId) {
             $q->where('branch_id', $branchId);
-        })->with(['facebookLeadForm.facebookPage', 'facebookLeadSource']);
+        })->with(['facebookLeadForm.facebookPage']);
 
         // Store base query for statistics before applying filters
         $statsQuery = clone $query;

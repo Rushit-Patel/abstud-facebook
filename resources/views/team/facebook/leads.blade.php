@@ -79,26 +79,6 @@
 
             @if(count($leads) > 0)
                 <!-- No Leads -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No Leads Found</h3>
-                    <p class="text-gray-600 mb-6">No leads match your current filters or no leads have been received yet.</p>
-                    <div class="flex gap-3 justify-center">
-                        <a href="{{ route('facebook.lead-forms') }}" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors">
-                            Check Lead Forms
-                        </a>
-                        <a href="{{ route('facebook.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
-                            Go to Dashboard
-                        </a>
-                    </div>
-                </div>
-                                </div>
-                @else
-                    <!-- No Leads -->
                 <!-- Leads Table -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
@@ -252,6 +232,26 @@
                                 <p class="text-sm text-gray-600">Failed</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+                @else
+                
+                <!-- No Leads -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No Leads Found</h3>
+                    <p class="text-gray-600 mb-6">No leads match your current filters or no leads have been received yet.</p>
+                    <div class="flex gap-3 justify-center">
+                        <a href="{{ route('facebook.lead-forms') }}" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                            Check Lead Forms
+                        </a>
+                        <a href="{{ route('facebook.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
+                            Go to Dashboard
+                        </a>
                     </div>
                 </div>
             @endif

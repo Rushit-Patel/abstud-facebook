@@ -200,14 +200,14 @@
                                         <form action="{{ route('facebook.pages.unsubscribe', $page) }}" method="POST" class="flex-1" onsubmit="return confirm('Are you sure you want to unsubscribe from webhook? You will stop receiving real-time leads.')">
                                             @csrf
                                             <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
-                                                Unsubscribe Webhook
+                                                Unsubscribe
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('facebook.pages.subscribe', $page) }}" method="POST" class="flex-1">
                                             @csrf
                                             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
-                                                Subscribe Webhook
+                                                Subscribe
                                             </button>
                                         </form>
                                     @endif
