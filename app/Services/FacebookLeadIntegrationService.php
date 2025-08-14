@@ -585,7 +585,7 @@ class FacebookLeadIntegrationService
                                     'facebook_created_time' => $leadData['created_time'],
                                     'field_data' => $leadData['field_data'] ?? [],
                                     'raw_data' => $leadData,
-                                    'status' => 'pending',
+                                    'status' => 'new',
                                     'processing_attempts' => 0
                                 ]);
                                 
@@ -612,7 +612,7 @@ class FacebookLeadIntegrationService
                                             'facebook_created_time' => $leadData['created_time'],
                                             'field_data' => $leadData['field_data'] ?? [],
                                             'raw_data' => $leadData,
-                                            'status' => 'pending',
+                                            'status' => 'new',
                                             'processing_attempts' => 0
                                         ]);
                                         
