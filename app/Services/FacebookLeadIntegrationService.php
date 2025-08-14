@@ -518,10 +518,7 @@ class FacebookLeadIntegrationService
                                     'email' => $extractedData['email'],
                                     'phone' => $extractedData['phone'],
                                     'additional_data' => $extractedData['additional_data'],
-                                    'field_data' => $leadData['field_data'] ?? [],
-                                    'raw_data' => $leadData,
-                                    'status' => 'new',
-                                    'processing_attempts' => 0
+                                    'status' => 'new'
                                 ]);
                                 
                                 $syncedCount++;
@@ -552,10 +549,7 @@ class FacebookLeadIntegrationService
                                             'email' => $extractedData['email'],
                                             'phone' => $extractedData['phone'],
                                             'additional_data' => $extractedData['additional_data'],
-                                            'field_data' => $leadData['field_data'] ?? [],
-                                            'raw_data' => $leadData,
-                                            'status' => 'new',
-                                            'processing_attempts' => 0
+                                            'status' => 'new'
                                         ]);
                                         
                                         $syncedCount++;
