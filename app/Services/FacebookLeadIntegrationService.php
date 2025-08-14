@@ -545,7 +545,7 @@ class FacebookLeadIntegrationService
      */
     public function syncLeadsFromFacebook(FacebookBusinessAccount $businessAccount): array
     {
-        try {
+        // try {
             if (!$businessAccount->access_token) {
                 throw new Exception('No access token available for business account');
             }
@@ -559,12 +559,12 @@ class FacebookLeadIntegrationService
             })->where('is_active', true)->get();
 
             foreach ($leadForms as $leadForm) {
-                try {
+                // try {
                     // Get leads for this lead form from Facebook
-                    $response = Http::get("https://graph.facebook.com/v23.0/{$leadForm->facebook_lead_form_id}/leads", [
+                    $response = Http::get("https://graph.facebook.com/v23.0/{$leadForm->facebook_form_id}/leads", [
                         'access_token' => $businessAccount->access_token,
                         'fields' => 'id,created_time,field_data',
-                        'limit' => 100, // Facebook's max limit
+                        'limit' => 100, 
                     ]);
 
                     if ($response->successful()) {
@@ -627,18 +627,18 @@ class FacebookLeadIntegrationService
                     } else {
                         Log::warning('Failed to sync leads for form', [
                             'form_id' => $leadForm->id,
-                            'facebook_form_id' => $leadForm->facebook_lead_form_id,
+                            'facebook_form_id' => $leadForm->facebook_form_id,
                             'response' => $response->body()
                         ]);
                     }
 
-                } catch (Exception $e) {
-                    Log::error('Error syncing leads for form', [
-                        'form_id' => $leadForm->id,
-                        'error' => $e->getMessage()
-                    ]);
-                    continue; // Continue with next form
-                }
+                // } catch (Exception $e) {
+                //     Log::error('Error syncing leads for form', [
+                //         'form_id' => $leadForm->id,
+                //         'error' => $e->getMessage()
+                //     ]);
+                //     continue; // Continue with next form
+                // }
             }
 
             return [
@@ -648,17 +648,17 @@ class FacebookLeadIntegrationService
                 'message' => "Successfully synced {$syncedCount} new leads (processed {$totalProcessed} total)"
             ];
 
-        } catch (Exception $e) {
-            Log::error('Facebook leads sync failed', [
-                'error' => $e->getMessage(),
-                'business_account_id' => $businessAccount->id
-            ]);
+        // } catch (Exception $e) {
+        //     Log::error('Facebook leads sync failed', [
+        //         'error' => $e->getMessage(),
+        //         'business_account_id' => $businessAccount->id
+        //     ]);
 
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
+        //     return [
+        //         'success' => false,
+        //         'error' => $e->getMessage()
+        //     ];
+        // }
     }
 
     /**
