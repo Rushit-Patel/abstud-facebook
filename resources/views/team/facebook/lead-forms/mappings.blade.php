@@ -1,32 +1,39 @@
-@extends('team.layouts.app')
+@php
+    $breadcrumbs = [
+        ['title' => 'Home', 'url' => route('team.dashboard')],
+        ['title' => 'Facebook Integration', 'url' => route('facebook.dashboard')],
+        ['title' => 'Lead Forms', 'url' => route('facebook.lead-forms')],
+        ['title' => $leadForm->form_name, 'url' => route('facebook.lead-forms.show', $leadForm)],
+        ['title' => 'Parameter Mappings']
+    ];
+@endphp
 
-@section('title', 'Parameter Mappings - ' . $leadForm->form_name)
-
-@section('content')
-<div class="container-fluid">
-    <div class="grid">
-        <!-- Header -->
-        <div class="card mb-5 lg:mb-7.5">
-            <div class="card-header">
+<x-team.layout.app title="Parameter Mappings - {{ $leadForm->form_name }}" :breadcrumbs="$breadcrumbs">
+    <x-slot name="content">
+        <div class="kt-container-fixed">
+            <!-- Header -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('facebook.lead-forms.show', $leadForm) }}" class="btn btn-sm btn-light">
-                        <i class="ki-filled ki-black-left"></i>
+                    <a href="{{ route('facebook.lead-forms.show', $leadForm) }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
                         Back to Lead Form
                     </a>
                     <div class="flex flex-col">
-                        <h1 class="text-xl font-semibold text-gray-900">Parameter Mappings</h1>
-                        <p class="text-sm text-gray-600">Map Facebook lead form fields to your system fields</p>
+                        <h1 class="text-2xl font-semibold text-gray-900">Parameter Mappings</h1>
+                        <p class="text-gray-600">Map Facebook lead form fields to your system fields</p>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Lead Form Info Card -->
-        <div class="card mb-5 lg:mb-7.5">
-            <div class="card-body">
+            <!-- Lead Form Info Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="ki-filled ki-facebook text-xl text-blue-600"></i>
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
                     </div>
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold">{{ $leadForm->form_name }}</h3>
@@ -40,76 +47,77 @@
                     </div>
                     <div class="flex items-center gap-2">
                         @if($leadForm->is_active)
-                            <span class="badge badge-success">Active</span>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Active</span>
                         @else
-                            <span class="badge badge-secondary">Inactive</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Inactive</span>
                         @endif
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Mapping Configuration -->
-        <div class="card">
-            <div class="card-header">
-                <div class="flex items-center justify-between">
-                    <h3 class="card-title">Facebook Field Mappings</h3>
-                    <button type="button" class="btn btn-primary" data-modal-toggle="#add_mapping_modal">
-                        <i class="ki-filled ki-plus"></i>
-                        Add New Mapping
-                    </button>
+            <!-- Mapping Configuration -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="border-b border-gray-200 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">Facebook Field Mappings</h3>
+                        <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors" data-modal-toggle="#add_mapping_modal">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Add New Mapping
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                @if($leadForm->facebookParameterMappings->count() > 0)
-                    <form action="{{ route('facebook.lead-forms.mappings.save', $leadForm) }}" method="POST" id="mappingsForm">
-                        @csrf
-                        <div class="overflow-x-auto">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th class="min-w-48">Facebook Field</th>
-                                        <th class="min-w-32">Field Type</th>
-                                        <th class="min-w-48">System Field</th>
-                                        <th class="min-w-24 text-center">Required</th>
-                                        <th class="min-w-24 text-center">Active</th>
-                                        <th class="min-w-20 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="mappingsTableBody">
-                                    @foreach($leadForm->facebookParameterMappings as $index => $mapping)
-                                        <tr data-mapping-id="{{ $mapping->id }}">
-                                            <td>
-                                                <input type="hidden" name="mappings[{{ $index }}][id]" value="{{ $mapping->id }}">
-                                                <input type="text" name="mappings[{{ $index }}][facebook_field_name]" 
-                                                       value="{{ $mapping->facebook_field_name }}" 
-                                                       class="input input-sm" 
-                                                       placeholder="e.g., full_name, email, phone_number" required>
-                                            </td>
-                                            <td>
-                                                <select name="mappings[{{ $index }}][facebook_field_type]" class="select select-sm" required>
-                                                    <option value="text" {{ $mapping->facebook_field_type === 'text' ? 'selected' : '' }}>Text</option>
-                                                    <option value="email" {{ $mapping->facebook_field_type === 'email' ? 'selected' : '' }}>Email</option>
-                                                    <option value="phone" {{ $mapping->facebook_field_type === 'phone' ? 'selected' : '' }}>Phone</option>
-                                                    <option value="select" {{ $mapping->facebook_field_type === 'select' ? 'selected' : '' }}>Select</option>
-                                                    <option value="textarea" {{ $mapping->facebook_field_type === 'textarea' ? 'selected' : '' }}>Textarea</option>
-                                                    <option value="date" {{ $mapping->facebook_field_type === 'date' ? 'selected' : '' }}>Date</option>
-                                                    <option value="number" {{ $mapping->facebook_field_type === 'number' ? 'selected' : '' }}>Number</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select name="mappings[{{ $index }}][system_field_name]" class="select select-sm system-field-select" required>
-                                                    <option value="">Select System Field...</option>
-                                                    @foreach($systemVariables as $category => $variables)
-                                                        <optgroup label="{{ $category }}">
-                                                            @foreach($variables as $varKey => $varDescription)
-                                                                <option value="{{ $varKey }}" 
-                                                                        title="{{ $varDescription }}"
-                                                                        {{ $mapping->system_field_name === $varKey ? 'selected' : '' }}>
-                                                                    {{ $varKey }} - {{ $varDescription }}
-                                                                </option>
-                                                            @endforeach
-                                                        </optgroup>
+                <div class="p-6">
+                    @if($leadForm->facebookParameterMappings->count() > 0)
+                        <form action="{{ route('facebook.lead-forms.mappings.save', $leadForm) }}" method="POST" id="mappingsForm">
+                            @csrf
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-48">Facebook Field</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-32">Field Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-48">System Field</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-24">Required</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-24">Active</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-20">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mappingsTableBody" class="bg-white divide-y divide-gray-200">
+                                        @foreach($leadForm->facebookParameterMappings as $index => $mapping)
+                                            <tr data-mapping-id="{{ $mapping->id }}">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <input type="hidden" name="mappings[{{ $index }}][id]" value="{{ $mapping->id }}">
+                                                    <input type="text" name="mappings[{{ $index }}][facebook_field_name]" 
+                                                           value="{{ $mapping->facebook_field_name }}" 
+                                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                                           placeholder="e.g., full_name, email, phone_number" required>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <select name="mappings[{{ $index }}][facebook_field_type]" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                                        <option value="text" {{ $mapping->facebook_field_type === 'text' ? 'selected' : '' }}>Text</option>
+                                                        <option value="email" {{ $mapping->facebook_field_type === 'email' ? 'selected' : '' }}>Email</option>
+                                                        <option value="phone" {{ $mapping->facebook_field_type === 'phone' ? 'selected' : '' }}>Phone</option>
+                                                        <option value="select" {{ $mapping->facebook_field_type === 'select' ? 'selected' : '' }}>Select</option>
+                                                        <option value="textarea" {{ $mapping->facebook_field_type === 'textarea' ? 'selected' : '' }}>Textarea</option>
+                                                        <option value="date" {{ $mapping->facebook_field_type === 'date' ? 'selected' : '' }}>Date</option>
+                                                        <option value="number" {{ $mapping->facebook_field_type === 'number' ? 'selected' : '' }}>Number</option>
+                                                    </select>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <select name="mappings[{{ $index }}][system_field_name]" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 system-field-select" required>
+                                                        <option value="">Select System Field...</option>
+                                                        @foreach($systemVariables as $category => $variables)
+                                                            <optgroup label="{{ $category }}">
+                                                                @foreach($variables as $varKey => $varDescription)
+                                                                    <option value="{{ $varKey }}" 
+                                                                            title="{{ $varDescription }}"
+                                                                            {{ $mapping->system_field_name === $varKey ? 'selected' : '' }}>
+                                                                        {{ $varKey }} - {{ $varDescription }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </optgroup>
                                                     @endforeach
                                                 </select>
                                             </td>
@@ -330,9 +338,10 @@
         <div class="modal-footer">
             <button class="btn btn-secondary" data-modal-dismiss="true">Close</button>
         </div>
+        </div>
     </div>
-</div>
-@endsection
+    </x-slot>
+</x-team.layout.app>
 
 @push('scripts')
 <script>
