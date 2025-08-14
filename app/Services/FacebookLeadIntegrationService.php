@@ -16,78 +16,6 @@ use Exception;
 
 class FacebookLeadIntegrationService
 {
-    /**
-     * Process incoming Facebook lead data
-     */
-    public function processLead(array $leadData, string $formId): array
-    {
-        try {
-            DB::beginTransaction();
-
-            // Find the lead form
-            $leadForm = FacebookLeadForm::where('facebook_form_id', $formId)->first();
-            if (!$leadForm) {
-                throw new Exception("Lead form not found: {$formId}");
-            }
-
-            // Extract basic lead information
-            $fieldData = $leadData['field_data'] ?? [];
-            $extractedData = $this->extractLeadData($fieldData);
-
-            // Create Facebook lead record
-            $facebookLead = FacebookLead::create([
-                'facebook_lead_form_id' => $leadForm->id,
-                'facebook_lead_id' => $leadData['id'],
-                'name' => $extractedData['name'],
-                'email' => $extractedData['email'],
-                'phone' => $extractedData['phone'],
-                'additional_data' => $extractedData['additional_data'],
-                'facebook_created_time' => $leadData['created_time'],
-                'status' => 'new'
-            ]);
-
-            // Process the lead data and create system lead
-            $systemLead = $this->createSystemLead($facebookLead, $fieldData);
-
-            // Update Facebook lead status
-            $facebookLead->markAsProcessed();
-
-            // Process lead source information
-            $this->processLeadSource($facebookLead, $leadData);
-
-            DB::commit();
-
-            return [
-                'success' => true,
-                'facebook_lead_id' => $facebookLead->id,
-                'system_lead_id' => $systemLead->id ?? null,
-                'message' => 'Lead processed successfully'
-            ];
-
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            // Update processing status if Facebook lead was created
-            if (isset($facebookLead)) {
-                $facebookLead->markAsFailed();
-            }
-
-            Log::error('Facebook lead processing failed', [
-                'error' => $e->getMessage(),
-                'lead_data' => $leadData ?? null,
-                'form_id' => $formId
-            ]);
-
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Extract lead data from Facebook field data
-     */
     protected function extractLeadData(array $fieldData): array
     {
         $extracted = [
@@ -559,7 +487,7 @@ class FacebookLeadIntegrationService
             })->where('is_active', true)->get();
 
             foreach ($leadForms as $leadForm) {
-                // try {
+                try {
                     // Get leads for this lead form from Facebook
                     $response = Http::get("https://graph.facebook.com/v23.0/{$leadForm->facebook_form_id}/leads", [
                         'access_token' => $businessAccount->access_token,
@@ -578,11 +506,18 @@ class FacebookLeadIntegrationService
                             $existingLead = FacebookLead::where('facebook_lead_id', $leadData['id'])->first();
                             
                             if (!$existingLead) {
+                                // Extract field data for easier access
+                                $extractedData = $this->extractLeadData($leadData['field_data'] ?? []);
+                                
                                 // Create new lead
                                 FacebookLead::create([
                                     'facebook_lead_form_id' => $leadForm->id,
                                     'facebook_lead_id' => $leadData['id'],
                                     'facebook_created_time' => $leadData['created_time'],
+                                    'name' => $extractedData['name'],
+                                    'email' => $extractedData['email'],
+                                    'phone' => $extractedData['phone'],
+                                    'additional_data' => $extractedData['additional_data'],
                                     'field_data' => $leadData['field_data'] ?? [],
                                     'raw_data' => $leadData,
                                     'status' => 'new',
@@ -606,10 +541,17 @@ class FacebookLeadIntegrationService
                                     $existingLead = FacebookLead::where('facebook_lead_id', $leadData['id'])->first();
                                     
                                     if (!$existingLead) {
+                                        // Extract field data for easier access
+                                        $extractedData = $this->extractLeadData($leadData['field_data'] ?? []);
+                                        
                                         FacebookLead::create([
                                             'facebook_lead_form_id' => $leadForm->id,
                                             'facebook_lead_id' => $leadData['id'],
                                             'facebook_created_time' => $leadData['created_time'],
+                                            'name' => $extractedData['name'],
+                                            'email' => $extractedData['email'],
+                                            'phone' => $extractedData['phone'],
+                                            'additional_data' => $extractedData['additional_data'],
                                             'field_data' => $leadData['field_data'] ?? [],
                                             'raw_data' => $leadData,
                                             'status' => 'new',
@@ -632,13 +574,13 @@ class FacebookLeadIntegrationService
                         ]);
                     }
 
-                // } catch (Exception $e) {
-                //     Log::error('Error syncing leads for form', [
-                //         'form_id' => $leadForm->id,
-                //         'error' => $e->getMessage()
-                //     ]);
-                //     continue; // Continue with next form
-                // }
+                } catch (Exception $e) {
+                    Log::error('Error syncing leads for form', [
+                        'form_id' => $leadForm->id,
+                        'error' => $e->getMessage()
+                    ]);
+                    continue; // Continue with next form
+                }
             }
 
             return [
