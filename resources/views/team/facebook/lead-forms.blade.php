@@ -134,10 +134,6 @@
                                             {{ $form->is_active ? 'Deactivate' : 'Activate' }}
                                         </button>
                                     </form>
-                                </div>
-                                
-                                <!-- Secondary Actions -->
-                                <div class="flex gap-2">
                                     <a href="{{ route('facebook.leads') }}?form_id={{ $form->id }}" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors text-center shadow-sm">
                                         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
