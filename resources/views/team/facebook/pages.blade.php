@@ -237,36 +237,35 @@
                                         </form>
                                     @endif
                                     
-                                    <div class="kt-menu" data-kt-menu="true">
-                                        <button class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                    <div data-kt-dropdown="true" data-kt-dropdown-offset="10px, 10px" data-kt-dropdown-placement="bottom-end" class="">
+                                        <button class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors" data-kt-dropdown-toggle="true">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                                             </svg>
                                         </button>
-                                        <div class="kt-menu-content w-36" data-kt-menu="true">
-                                            <form action="{{ route('facebook.pages.sync-forms', $page) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="kt-menu-item">
-                                                    <span class="kt-menu-link px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
+                                        <div class="kt-dropdown-menu p-0 w-48 hidden" data-kt-dropdown-menu="true">
+                                            <div class="flex flex-col py-2">
+                                                <form action="{{ route('facebook.pages.sync-forms', $page) }}" method="POST" class="contents">
+                                                    @csrf
+                                                    <button type="submit" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                        <i class="ki-filled ki-arrows-circle text-base mr-3 text-blue-600"></i>
                                                         Sync Forms
-                                                    </span>
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('facebook.pages.refresh', $page) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="kt-menu-item">
-                                                    <span class="kt-menu-link px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('facebook.pages.refresh', $page) }}" method="POST" class="contents">
+                                                    @csrf
+                                                    <button type="submit" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                        <i class="ki-filled ki-arrows-loop text-base mr-3 text-indigo-600"></i>
                                                         Refresh Data
-                                                    </span>
-                                                </button>
-                                            </form>
-                                            @if($page->facebookLeadForms->count() > 0)
-                                                <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="kt-menu-item">
-                                                    <span class="kt-menu-link px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                                    </button>
+                                                </form>
+                                                @if($page->facebookLeadForms->count() > 0)
+                                                    <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                        <i class="ki-filled ki-file-sheet text-base mr-3 text-green-600"></i>
                                                         View Forms ({{ $page->facebookLeadForms->count() }})
-                                                    </span>
-                                                </a>
-                                            @endif
+                                                    </a>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
