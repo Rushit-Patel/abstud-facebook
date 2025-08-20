@@ -288,6 +288,47 @@ class FacebookIntegrationController extends Controller
     }
 
     /**
+     * Refresh Page Data (cover image, profile picture, etc.)
+     */
+    public function refreshPageData(FacebookPage $page)
+    {
+        try {
+            $businessAccount = $page->facebookBusinessAccount;
+            $accessToken = $page->page_access_token ?: $businessAccount->access_token;
+            
+            if (!$accessToken) {
+                return redirect()->back()->with('error', 'No access token available for this page.');
+            }
+
+            // Call Facebook Graph API to get updated page information
+            $response = \Illuminate\Support\Facades\Http::get("https://graph.facebook.com/v23.0/{$page->facebook_page_id}", [
+                'fields' => 'id,name,category,fan_count,picture{url},cover{source}',
+                'access_token' => $accessToken,
+            ]);
+
+            if ($response->successful()) {
+                $pageData = $response->json();
+                
+                $page->update([
+                    'page_name' => $pageData['name'] ?? $page->page_name,
+                    'page_category' => $pageData['category'] ?? $page->page_category,
+                    'fan_count' => $pageData['fan_count'] ?? $page->fan_count,
+                    'profile_picture_url' => $pageData['picture']['data']['url'] ?? $page->profile_picture_url,
+                    'cover_image_url' => $pageData['cover']['source'] ?? $page->cover_image_url,
+                ]);
+
+                return redirect()->back()->with('success', 'Page data refreshed successfully!');
+            } else {
+                $error = $response->json();
+                return redirect()->back()->with('error', 'Failed to refresh page data: ' . ($error['error']['message'] ?? 'Unknown error'));
+            }
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Failed to refresh page data: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Subscribe Page to Webhook for Real-time Leads
      */
     public function subscribePageToWebhook(FacebookPage $page)

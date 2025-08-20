@@ -124,30 +124,86 @@
                 <!-- Pages List -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     @foreach($pages as $page)
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <!-- Page Header -->
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <!-- Page Cover Image -->
+                            @if($page->cover_image_url)
+                                <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+                                    <img src="{{ $page->cover_image_url }}" alt="{{ $page->page_name }} Cover" 
+                                         class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                                </div>
+                            @else
+                                <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <svg class="w-12 h-12 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                         </svg>
                                     </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900">{{ $page->page_name }}</h3>
-                                        <p class="text-xs text-gray-500">{{ $page->facebook_page_id }}</p>
+                                </div>
+                            @endif
+                            
+                            <div class="p-6">
+                                <!-- Page Header -->
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center gap-3">
+                                        @if($page->profile_picture_url)
+                                            <img src="{{ $page->profile_picture_url }}" alt="{{ $page->page_name }}" 
+                                                 class="w-12 h-12 rounded-lg object-cover border-2 border-white shadow-md -mt-8 relative z-10">
+                                        @else
+                                            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center -mt-8 relative z-10 border-2 border-white shadow-md">
+                                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                        <div class="flex-1">
+                                            <h3 class="font-semibold text-gray-900 text-lg">{{ $page->page_name }}</h3>
+                                            @if($page->page_category)
+                                                <p class="text-sm text-gray-600">{{ $page->page_category }}</p>
+                                            @endif
+                                            @if($page->fan_count)
+                                                <p class="text-xs text-gray-500">{{ number_format($page->fan_count) }} followers</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium 
+                                            {{ $page->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ $page->is_active ? 'Active' : 'Inactive' }}
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2 py-1 rounded-full text-xs font-medium 
-                                        {{ $page->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                        {{ $page->is_active ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </div>
-                            </div>
 
-                            <!-- Page Stats -->
-                            <div class="space-y-3 mb-4">
+                                <!-- Page Details Section -->
+                                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-3">Page Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-600">Page ID:</span>
+                                            <span class="font-mono text-xs bg-white px-2 py-1 rounded border">{{ $page->facebook_page_id }}</span>
+                                        </div>
+                                        <div class="flex items-start justify-between text-sm">
+                                            <span class="text-gray-600">Access Token:</span>
+                                            <div class="flex items-center gap-2">
+                                                @if($page->page_access_token)
+                                                    <span class="font-mono text-xs bg-white px-2 py-1 rounded border max-w-32 truncate" 
+                                                          title="{{ $page->page_access_token }}">{{ substr($page->page_access_token, 0, 20) }}...</span>
+                                                    <button onclick="copyToClipboard('{{ $page->page_access_token }}')" 
+                                                            class="text-blue-600 hover:text-blue-700 text-xs">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                    </button>
+                                                @else
+                                                    <span class="text-red-500 text-xs">No token</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Page Stats -->
+                                <div class="space-y-3 mb-4">
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-gray-600">Lead Forms:</span>
                                     <span class="font-medium">{{ $page->facebookLeadForms->count() }}</span>
@@ -212,6 +268,13 @@
                                         </form>
                                     @endif
                                     
+                                    <form action="{{ route('facebook.pages.refresh', $page) }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
+                                            Refresh Data
+                                        </button>
+                                    </form>
+                                    
                                     @if($page->facebookLeadForms->count() > 0)
                                         <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="flex-1 block bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">
                                             Forms ({{ $page->facebookLeadForms->count() }})
@@ -245,5 +308,43 @@
                 @endif
             @endif
         </div>
+    </x-slot>
+
+    <x-slot name="scripts">
+        <script>
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(function() {
+                    // Show success message
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                    toast.textContent = 'Access token copied to clipboard!';
+                    document.body.appendChild(toast);
+                    
+                    // Remove toast after 3 seconds
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Show success message
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                    toast.textContent = 'Access token copied to clipboard!';
+                    document.body.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 3000);
+                });
+            }
+        </script>
     </x-slot>
 </x-team.layout.app>

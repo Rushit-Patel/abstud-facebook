@@ -19,6 +19,7 @@ class FacebookPage extends Model
         'page_category',
         'fan_count',
         'profile_picture_url',
+        'cover_image_url',
         'is_published',
         'is_active',
         'webhook_subscribed',

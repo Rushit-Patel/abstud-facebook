@@ -397,14 +397,14 @@ class FacebookLeadIntegrationService
             
             // Try to get pages the user manages (most common case)
             $response = $this->callFacebookApi("/me/accounts", $accessToken, [
-                'fields' => 'id,name,access_token,category,fan_count,picture{url}',
+                'fields' => 'id,name,access_token,category,fan_count,picture{url},cover{source}',
                 'limit' => 100
             ]);
 
             // If that fails, try getting pages from business account (if business_id is provided)
             if (!$response['success'] && !empty($businessId)) {
                 $response = $this->callFacebookApi("/{$businessId}/client_pages", $accessToken, [
-                    'fields' => 'id,name,access_token,category,fan_count,picture{url}',
+                    'fields' => 'id,name,access_token,category,fan_count,picture{url},cover{source}',
                     'limit' => 100
                 ]);
             }
@@ -412,7 +412,7 @@ class FacebookLeadIntegrationService
             // If still no success, try just getting user's basic page access
             if (!$response['success']) {
                 $response = $this->callFacebookApi("/me", $accessToken, [
-                    'fields' => 'accounts{id,name,access_token,category,fan_count,picture{url}}',
+                    'fields' => 'accounts{id,name,access_token,category,fan_count,picture{url},cover{source}}',
                 ]);
                 
                 // Restructure the response to match expected format
@@ -442,6 +442,7 @@ class FacebookLeadIntegrationService
                     'fan_count' => $pageData['fan_count'] ?? 0,
                     'page_access_token' => $pageData['access_token'] ?? null,
                     'profile_picture_url' => $pageData['picture']['data']['url'] ?? null,
+                    'cover_image_url' => $pageData['cover']['source'] ?? null,
                     'is_published' => true, // Assume published if we can access it
                     'is_active' => true,
                 ]);
