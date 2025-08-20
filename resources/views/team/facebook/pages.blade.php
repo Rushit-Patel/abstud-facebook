@@ -124,177 +124,146 @@
                 <!-- Pages List -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     @foreach($pages as $page)
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                            <!-- Page Cover Image -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                            <!-- Page Cover Image (Minimal Height) -->
                             @if($page->cover_image_url)
-                                <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+                                <div class="h-20 relative">
                                     <img src="{{ $page->cover_image_url }}" alt="{{ $page->page_name }} Cover" 
                                          class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                                 </div>
                             @else
-                                <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <svg class="w-12 h-12 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                    </div>
-                                </div>
+                                <div class="h-20 bg-gradient-to-r from-blue-600 to-blue-700"></div>
                             @endif
                             
-                            <div class="p-6">
-                                <!-- Page Header -->
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        @if($page->profile_picture_url)
-                                            <img src="{{ $page->profile_picture_url }}" alt="{{ $page->page_name }}" 
-                                                 class="w-12 h-12 rounded-lg object-cover border-2 border-white shadow-md -mt-8 relative z-10">
-                                        @else
-                                            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center -mt-8 relative z-10 border-2 border-white shadow-md">
-                                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                                </svg>
-                                            </div>
-                                        @endif
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold text-gray-900 text-lg">{{ $page->page_name }}</h3>
+                            <div class="p-5">
+                                <!-- Page Header (Simplified) -->
+                                <div class="flex items-start gap-3 mb-4">
+                                    @if($page->profile_picture_url)
+                                        <img src="{{ $page->profile_picture_url }}" alt="{{ $page->page_name }}" 
+                                             class="w-10 h-10 rounded-lg object-cover border-2 border-white shadow-sm -mt-7 relative z-10 bg-white">
+                                    @else
+                                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center -mt-7 relative z-10 border-2 border-white shadow-sm">
+                                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                            </svg>
+                                        </div>
+                                    @endif
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-semibold text-gray-900 text-base truncate">{{ $page->page_name }}</h3>
+                                        <div class="flex items-center gap-2 mt-1">
                                             @if($page->page_category)
-                                                <p class="text-sm text-gray-600">{{ $page->page_category }}</p>
+                                                <span class="text-sm text-gray-600">{{ $page->page_category }}</span>
                                             @endif
                                             @if($page->fan_count)
-                                                <p class="text-xs text-gray-500">{{ number_format($page->fan_count) }} followers</p>
+                                                <span class="text-xs text-gray-500">• {{ number_format($page->fan_count) }} followers</span>
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium 
-                                            {{ $page->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ $page->is_active ? 'Active' : 'Inactive' }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Page Details Section -->
-                                <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                                    <h4 class="text-sm font-semibold text-gray-900 mb-3">Page Details</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center justify-between text-sm">
-                                            <span class="text-gray-600">Page ID:</span>
-                                            <span class="font-mono text-xs bg-white px-2 py-1 rounded border">{{ $page->facebook_page_id }}</span>
-                                        </div>
-                                        <div class="flex items-start justify-between text-sm">
-                                            <span class="text-gray-600">Access Token:</span>
-                                            <div class="flex items-center gap-2">
-                                                @if($page->page_access_token)
-                                                    <span class="font-mono text-xs bg-white px-2 py-1 rounded border max-w-32 truncate" 
-                                                          title="{{ $page->page_access_token }}">{{ substr($page->page_access_token, 0, 20) }}...</span>
-                                                    <button onclick="copyToClipboard('{{ $page->page_access_token }}')" 
-                                                            class="text-blue-600 hover:text-blue-700 text-xs">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                                        </svg>
-                                                    </button>
-                                                @else
-                                                    <span class="text-red-500 text-xs">No token</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Page Stats -->
-                                <div class="space-y-3 mb-4">
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600">Lead Forms:</span>
-                                    <span class="font-medium">{{ $page->facebookLeadForms->count() }}</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600">Active Forms:</span>
-                                    <span class="font-medium">{{ $page->facebookLeadForms->where('is_active', true)->count() }}</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600">Webhook Status:</span>
-                                    <span class="flex items-center gap-1">
-                                        <div class="w-2 h-2 rounded-full {{ $page->webhook_subscribed ? 'bg-green-500' : 'bg-gray-400' }}"></div>
-                                        <span class="font-medium text-xs {{ $page->webhook_subscribed ? 'text-green-700' : 'text-gray-500' }}">
-                                            {{ $page->webhook_subscribed ? 'Subscribed' : 'Not Subscribed' }}
-                                        </span>
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium shrink-0
+                                        {{ $page->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                                        {{ $page->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </div>
-                                @if($page->webhook_subscribed && $page->webhook_subscribed_at)
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600">Subscribed:</span>
-                                    <span class="font-medium text-xs">{{ $page->webhook_subscribed_at->format('M d, Y') }}</span>
-                                </div>
-                                @endif
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600">Created:</span>
-                                    <span class="font-medium">{{ $page->created_at->format('M d, Y') }}</span>
-                                </div>
-                            </div>
 
-                            <!-- Page Actions -->
-                            <div class="flex flex-col gap-2">
+                                <!-- Page Details (Compact) -->
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600">Page ID:</span>
+                                        <div class="flex items-center gap-1">
+                                            <code class="text-xs bg-gray-100 px-2 py-1 rounded">{{ substr($page->facebook_page_id, 0, 12) }}...</code>
+                                            <button onclick="copyToClipboard('{{ $page->facebook_page_id }}')" 
+                                                    class="text-gray-500 hover:text-blue-600 transition-colors" title="Copy Page ID">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600">Access Token:</span>
+                                        <div class="flex items-center gap-1">
+                                            @if($page->page_access_token)
+                                                <code class="text-xs bg-gray-100 px-2 py-1 rounded">{{ substr($page->page_access_token, 0, 12) }}...</code>
+                                                <button onclick="copyToClipboard('{{ $page->page_access_token }}')" 
+                                                        class="text-gray-500 hover:text-blue-600 transition-colors" title="Copy Access Token">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                </button>
+                                            @else
+                                                <span class="text-xs text-red-500">No token</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats (Minimal) -->
+                                <div class="flex items-center justify-between text-sm mb-4 pt-3 border-t border-gray-100">
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-gray-600">Forms: <span class="font-medium text-gray-900">{{ $page->facebookLeadForms->count() }}</span></span>
+                                        <div class="flex items-center gap-1">
+                                            <div class="w-2 h-2 rounded-full {{ $page->webhook_subscribed ? 'bg-green-500' : 'bg-gray-400' }}"></div>
+                                            <span class="text-xs {{ $page->webhook_subscribed ? 'text-green-700' : 'text-gray-500' }}">
+                                                {{ $page->webhook_subscribed ? 'Webhook' : 'No Webhook' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Actions (Simplified) -->
                                 <div class="flex gap-2">
                                     <form action="{{ route('facebook.pages.toggle', $page) }}" method="POST" class="flex-1">
                                         @csrf
-                                        <button type="submit" class="w-full {{ $page->is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
+                                        <button type="submit" class="w-full text-sm py-2 px-3 rounded border transition-colors
+                                            {{ $page->is_active ? 'border-red-300 text-red-700 hover:bg-red-50' : 'border-green-300 text-green-700 hover:bg-green-50' }}">
                                             {{ $page->is_active ? 'Deactivate' : 'Activate' }}
                                         </button>
                                     </form>
-                                    <form action="{{ route('facebook.pages.sync-forms', $page) }}" method="POST" class="flex-1">
-                                        @csrf
-                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
-                                            Sync Forms
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <!-- Webhook Subscription Actions -->
-                                <div class="flex gap-2">
-                                    @if($page->webhook_subscribed)
-                                        <form action="{{ route('facebook.pages.unsubscribe', $page) }}" method="POST" class="flex-1" onsubmit="return confirm('Are you sure you want to unsubscribe from webhook? You will stop receiving real-time leads.')">
-                                            @csrf
-                                            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
-                                                Unsubscribe
-                                            </button>
-                                        </form>
-                                    @else
+                                    
+                                    @if(!$page->webhook_subscribed)
                                         <form action="{{ route('facebook.pages.subscribe', $page) }}" method="POST" class="flex-1">
                                             @csrf
-                                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
+                                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-3 rounded transition-colors">
                                                 Subscribe
                                             </button>
                                         </form>
+                                    @else
+                                        <form action="{{ route('facebook.pages.unsubscribe', $page) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="w-full border border-orange-300 text-orange-700 hover:bg-orange-50 text-sm py-2 px-3 rounded transition-colors">
+                                                Unsubscribe
+                                            </button>
+                                        </form>
                                     @endif
                                     
-                                    <form action="{{ route('facebook.pages.refresh', $page) }}" method="POST" class="flex-1">
-                                        @csrf
-                                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors">
-                                            Refresh Data
-                                        </button>
-                                    </form>
-                                    
-                                    @if($page->facebookLeadForms->count() > 0)
-                                        <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="flex-1 block bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-2 px-3 rounded-lg transition-colors text-center">
-                                            Forms ({{ $page->facebookLeadForms->count() }})
-                                        </a>
-                                    @endif
-                                </div>
-
-                                @if(!$page->webhook_subscribed)
-                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
-                                        <div class="flex items-start gap-2">
-                                            <svg class="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.5 0L4.268 6.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    <div class="relative">
+                                        <button onclick="toggleDropdown({{ $page->id }})" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                                             </svg>
-                                            <div class="text-sm">
-                                                <p class="text-yellow-800 font-medium">Webhook Required</p>
-                                                <p class="text-yellow-700">Subscribe to webhook to receive real-time leads from this page.</p>
-                                            </div>
+                                        </button>
+                                        <div id="dropdown-{{ $page->id }}" class="hidden absolute right-0 mt-1 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                            <form action="{{ route('facebook.pages.sync-forms', $page) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg">
+                                                    Sync Forms
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('facebook.pages.refresh', $page) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
+                                                    Refresh Data
+                                                </button>
+                                            </form>
+                                            @if($page->facebookLeadForms->count() > 0)
+                                                <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg">
+                                                    View Forms ({{ $page->facebookLeadForms->count() }})
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
-                                @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -314,16 +283,7 @@
         <script>
             function copyToClipboard(text) {
                 navigator.clipboard.writeText(text).then(function() {
-                    // Show success message
-                    const toast = document.createElement('div');
-                    toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                    toast.textContent = 'Access token copied to clipboard!';
-                    document.body.appendChild(toast);
-                    
-                    // Remove toast after 3 seconds
-                    setTimeout(() => {
-                        document.body.removeChild(toast);
-                    }, 3000);
+                    showToast('Copied to clipboard!', 'success');
                 }).catch(function(err) {
                     console.error('Could not copy text: ', err);
                     // Fallback for older browsers
@@ -333,18 +293,55 @@
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    
-                    // Show success message
-                    const toast = document.createElement('div');
-                    toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                    toast.textContent = 'Access token copied to clipboard!';
-                    document.body.appendChild(toast);
-                    
-                    setTimeout(() => {
-                        document.body.removeChild(toast);
-                    }, 3000);
+                    showToast('Copied to clipboard!', 'success');
                 });
             }
+
+            function toggleDropdown(pageId) {
+                const dropdown = document.getElementById(`dropdown-${pageId}`);
+                const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                
+                // Close all other dropdowns
+                allDropdowns.forEach(d => {
+                    if (d.id !== `dropdown-${pageId}`) {
+                        d.classList.add('hidden');
+                    }
+                });
+                
+                // Toggle current dropdown
+                dropdown.classList.toggle('hidden');
+            }
+
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+                toast.className = `fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-transform duration-300 translate-x-full`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-full');
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            document.body.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('[onclick^="toggleDropdown"]') && !event.target.closest('[id^="dropdown-"]')) {
+                    const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                    allDropdowns.forEach(d => d.classList.add('hidden'));
+                }
+            });
         </script>
     </x-slot>
 </x-team.layout.app>
