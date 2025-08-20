@@ -55,16 +55,6 @@ Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('f
     Route::get('lead-forms/{leadForm}', [FacebookIntegrationController::class, 'showLeadForm'])->name('lead-forms.show');
     Route::post('lead-forms/{leadForm}/toggle', [FacebookIntegrationController::class, 'toggleLeadForm'])->name('lead-forms.toggle');
     
-    // Parameter Mapping Configuration
-    Route::get('lead-forms/{leadForm}/mappings', [FacebookIntegrationController::class, 'mappings'])->name('lead-forms.mappings');
-    Route::post('lead-forms/{leadForm}/mappings', [FacebookIntegrationController::class, 'saveMappings'])->name('lead-forms.mappings.save');
-    Route::delete('mappings/{mapping}', [FacebookIntegrationController::class, 'deleteMapping'])->name('mappings.delete');
-    
-    // Custom Field Mappings
-    Route::get('lead-forms/{leadForm}/custom-mappings', [FacebookIntegrationController::class, 'customMappings'])->name('lead-forms.custom-mappings');
-    Route::post('lead-forms/{leadForm}/custom-mappings', [FacebookIntegrationController::class, 'saveCustomMappings'])->name('lead-forms.custom-mappings.save');
-    Route::delete('custom-mappings/{mapping}', [FacebookIntegrationController::class, 'deleteCustomMapping'])->name('custom-mappings.delete');
-    
     // Lead Management
     Route::get('leads', [FacebookIntegrationController::class, 'leads'])->name('leads');
     Route::post('leads/sync', [FacebookIntegrationController::class, 'syncLeads'])->name('leads.sync');
