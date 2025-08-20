@@ -130,9 +130,9 @@
                         If you have any questions about these Terms of Service, please contact us at:
                     </p>
                     <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                        <p class="text-gray-700"><strong>Email:</strong> legal@yourcompany.com</p>
-                        <p class="text-gray-700"><strong>Address:</strong> [Your Company Address]</p>
-                        <p class="text-gray-700"><strong>Phone:</strong> [Your Phone Number]</p>
+                        <p class="text-gray-700"><strong>Email:</strong> projects@abstud.io</p>
+                        <p class="text-gray-700"><strong>Address:</strong> 1201, The Capital 2, Science City Rd, Sola, Ahmedabad, Gujarat 380060</p>
+                        <p class="text-gray-700"><strong>Phone:</strong> +91 90995 89276</p>
                     </div>
 
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-8">

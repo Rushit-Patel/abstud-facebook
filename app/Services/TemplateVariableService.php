@@ -265,6 +265,7 @@ class TemplateVariableService
             $content = str_replace('{{' . $key . '}}', $value, $content);
             $content = str_replace('{{ ' . $key . ' }}', $value, $content);
             $content = str_replace('{' . $key . '}', $value, $content);
+            $content = str_replace('{ ' . $key . ' }', $value, $content);
         }
         return $content;
     }

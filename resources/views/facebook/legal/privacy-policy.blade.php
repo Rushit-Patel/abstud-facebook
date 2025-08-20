@@ -97,9 +97,9 @@
                         If you have any questions about this privacy policy or our data practices, please contact us at:
                     </p>
                     <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                        <p class="text-gray-700"><strong>Email:</strong> privacy@yourcompany.com</p>
-                        <p class="text-gray-700"><strong>Address:</strong> [Your Company Address]</p>
-                        <p class="text-gray-700"><strong>Phone:</strong> [Your Phone Number]</p>
+                        <p class="text-gray-700"><strong>Email:</strong> projects@abstud.io</p>
+                        <p class="text-gray-700"><strong>Address:</strong> 1201, The Capital 2, Science City Rd, Sola, Ahmedabad, Gujarat 380060</p>
+                        <p class="text-gray-700"><strong>Phone:</strong> +91 90995 89276</p>
                     </div>
                 </div>
             </div>
