@@ -8,6 +8,14 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Facebook Leads Synchronization - Every 2 minutes
+Schedule::command('facebook:sync-leads --all')
+    ->everyTwoMinutes()
+    ->withoutOverlapping(3) // Prevent overlapping for 3 minutes
+    ->runInBackground()
+    ->emailOutputOnFailure(config('mail.from.address'))
+    ->appendOutputTo(storage_path('logs/facebook-leads-sync.log'));
+
 // Unified Automation Campaign Processing
 Schedule::command('automation:process-campaigns --type=all --batch-size=100')
     ->everyMinute()

@@ -11,6 +11,8 @@ use App\Models\FacebookBusinessAccount;
 use App\Models\ClientLead; // Your existing lead model
 use App\Models\ClientDetails;
 use App\Models\Source;
+use App\Models\User;
+use App\Notifications\NewLeadNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -90,22 +92,25 @@ class FacebookLeadIntegrationService
             // Create ClientDetails
             $clientDetails = ClientDetails::create($clientDetailsData);
             $clientDetails->generateClientCode();
-
+            $branch = $leadForm->facebookPage->facebookBusinessAccount->branch_id ?? 1;
+            $created_by = User::where('branch_id', $branch)->first();
             // Prepare data for ClientLead
             $clientLeadData = [
                 'client_id' => $clientDetails->id,
                 'client_date' => now()->format('Y-m-d'),
                 'lead_type' => 2, // Default lead type - adjust as needed
                 'purpose' => 1,   // Default purpose - adjust as needed
-                'branch' => $leadForm->facebookPage->facebookBusinessAccount->branch_id ?? 1,
+                'branch' => $branch,
                 'assign_owner' => null, // Can be assigned later
-                'added_by' => 1, // System user or default - adjust as needed
+                'added_by' => $created_by->id ?? 1,
                 'status' => 1,   // Default status - adjust as needed
                 'remark' => 'Lead automatically created from Facebook Lead Ads',
             ];
 
             // Create ClientLead
             $clientLead = ClientLead::create($clientLeadData);
+            
+            (new NewLeadNotification($clientLead))->send();
 
             return $clientLead;
 

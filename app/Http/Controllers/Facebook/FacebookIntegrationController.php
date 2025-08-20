@@ -639,6 +639,78 @@ class FacebookIntegrationController extends Controller
     }
 
     /**
+     * API: Sync Leads from Facebook
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function apiSyncLeads(Request $request)
+    {
+        try {
+            $branchId = $request->input('branch_id');
+            
+            // If no branch_id provided, sync all branches
+            if (!$branchId) {
+                $businessAccounts = FacebookBusinessAccount::whereNotNull('access_token')->get();
+                $totalSynced = 0;
+                $totalProcessed = 0;
+                $results = [];
+
+                foreach ($businessAccounts as $businessAccount) {
+                    $result = $this->integrationService->syncLeadsFromFacebook($businessAccount);
+                    
+                    if ($result['success']) {
+                        $totalSynced += $result['synced_count'] ?? 0;
+                        $totalProcessed += $result['total_processed'] ?? 0;
+                    }
+                    
+                    $results[] = [
+                        'branch_id' => $businessAccount->branch_id,
+                        'business_name' => $businessAccount->business_name,
+                        'success' => $result['success'],
+                        'synced_count' => $result['synced_count'] ?? 0,
+                        'total_processed' => $result['total_processed'] ?? 0,
+                        'message' => $result['message'] ?? $result['error'] ?? 'Unknown result'
+                    ];
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "Sync completed for all branches. Total: {$totalSynced} new leads synced out of {$totalProcessed} processed.",
+                    'total_synced' => $totalSynced,
+                    'total_processed' => $totalProcessed,
+                    'results' => $results
+                ]);
+            }
+
+            // Sync specific branch
+            $businessAccount = FacebookBusinessAccount::where('branch_id', $branchId)->first();
+
+            if (!$businessAccount) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No business account found for the specified branch.'
+                ], 404);
+            }
+
+            $result = $this->integrationService->syncLeadsFromFacebook($businessAccount);
+
+            return response()->json([
+                'success' => $result['success'],
+                'message' => $result['success'] ? $result['message'] : $result['error'],
+                'synced_count' => $result['synced_count'] ?? 0,
+                'total_processed' => $result['total_processed'] ?? 0,
+                'branch_id' => $branchId
+            ], $result['success'] ? 200 : 422);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to sync leads: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Show Lead Details
      */
     public function showLead(FacebookLead $lead)

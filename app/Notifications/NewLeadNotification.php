@@ -8,6 +8,7 @@ use App\Models\EmailTemplate;
 use App\Mail\EmailTemplateMail;
 use App\Models\TeamNotificationType;
 use App\Models\TeamNotification;
+use App\Models\User;
 use App\Services\WhatsappService;
 use Auth;
 use Illuminate\Support\Facades\Mail;
@@ -132,6 +133,13 @@ class NewLeadNotification
             if (!$teamNotificationType && Auth::user()) {
                 return;
             }
+            if(Auth::user()){
+                $created_by = Auth::user()->id;
+            }else{
+                $created_by_data = User::where('branch_id', $this->leadData->client->branch_id)->first();
+                $created_by = $created_by_data->id;
+            }
+
             $variables = TemplateVariableService::getLeadVariables($this->leadData);
             
             // Process the notification message with variables
@@ -149,9 +157,9 @@ class NewLeadNotification
                     'lead_source' => $variables['lead_source'] ?? '',
                     'assigned_agent' => $variables['assigned_agent'] ?? '',
                 ],
-                'user_id' => $this->leadData->assign_owner, // Notify assigned user
+                'user_id' => $created_by,
                 'is_seen' => false,
-                'created_by' => Auth::user()->id,
+                'created_by' => $created_by,
             ]);
         } catch (\Exception $e) {
             Log::error('System notification creation failed: ' . $e->getMessage(), [
