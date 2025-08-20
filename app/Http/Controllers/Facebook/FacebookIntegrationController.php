@@ -442,8 +442,11 @@ class FacebookIntegrationController extends Controller
     {
         $leadForm->load(['facebookPage', 'facebookParameterMappings']);
         
-        // Get system variables from TemplateVariableService
-        $systemVariables = TemplateVariableService::getAllVariables();
+        // Get only client and lead related system variables
+        $allVariables = TemplateVariableService::getAllVariables();
+        $systemVariables = array_filter($allVariables, function($key) {
+            return in_array($key, ['Client Information', 'Lead Information']);
+        }, ARRAY_FILTER_USE_KEY);
         
         return view('team.facebook.lead-forms.mappings', compact('leadForm', 'systemVariables'));
     }
@@ -506,8 +509,11 @@ class FacebookIntegrationController extends Controller
     {
         $leadForm->load(['facebookPage', 'facebookCustomFieldMappings']);
         
-        // Get system variables from TemplateVariableService
-        $systemVariables = TemplateVariableService::getAllVariables();
+        // Get only client and lead related system variables
+        $allVariables = TemplateVariableService::getAllVariables();
+        $systemVariables = array_filter($allVariables, function($key) {
+            return in_array($key, ['Client Information', 'Lead Information']);
+        }, ARRAY_FILTER_USE_KEY);
         
         return view('team.facebook.lead-forms.custom-mappings', compact('leadForm', 'systemVariables'));
     }
@@ -809,7 +815,12 @@ class FacebookIntegrationController extends Controller
      */
     public function getSystemVariables()
     {
-        $systemVariables = TemplateVariableService::getAllVariables();
+        // Get only client and lead related system variables
+        $allVariables = TemplateVariableService::getAllVariables();
+        $systemVariables = array_filter($allVariables, function($key) {
+            return in_array($key, ['Client Information', 'Lead Information']);
+        }, ARRAY_FILTER_USE_KEY);
+        
         $sampleValues = TemplateVariableService::getSampleValues();
         
         return response()->json([
