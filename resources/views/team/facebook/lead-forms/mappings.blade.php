@@ -235,187 +235,6 @@
         </div>
     </x-slot>
 </x-team.layout.app>
-                                <i class="ki-filled ki-setting-2 text-blue-600"></i>
-                                Field Mapping Configuration
-                            </h3>
-                            <div class="flex items-center gap-2">
-                                <button type="button" class="btn btn-sm btn-light" id="addMappingRow">
-                                    <i class="ki-filled ki-plus"></i>
-                                    Add Mapping
-                                </button>
-                                <button type="button" class="btn btn-sm btn-info" id="previewMappings">
-                                    <i class="ki-filled ki-eye"></i>
-                                    Preview
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            @if($leadForm->facebookParameterMappings->count() > 0)
-                                <form method="POST" action="{{ route('facebook.lead-forms.mappings.save', $leadForm) }}">
-                                    @csrf
-                                    <div class="space-y-4">
-                                        @foreach($leadForm->facebookParameterMappings as $index => $mapping)
-                                            <div class="bg-gray-50 rounded-lg p-4 mapping-row">
-                                                <div class="grid lg:grid-cols-12 gap-4 items-center">
-                                                    <!-- Facebook Field -->
-                                                    <div class="lg:col-span-3">
-                                                        <label class="form-label text-xs font-semibold text-gray-600 mb-1">Facebook Field</label>
-                                                        <input type="text" 
-                                                               name="mappings[{{ $index }}][facebook_field_name]" 
-                                                               value="{{ $mapping->facebook_field_name }}"
-                                                               class="input input-sm"
-                                                               placeholder="e.g., full_name, email"
-                                                               required>
-                                                    </div>
-                                                    
-                                                    <!-- Field Type -->
-                                                    <div class="lg:col-span-2">
-                                                        <label class="form-label text-xs font-semibold text-gray-600 mb-1">Type</label>
-                                                        <select name="mappings[{{ $index }}][facebook_field_type]" class="select select-sm" required>
-                                                            <option value="text" {{ $mapping->facebook_field_type === 'text' ? 'selected' : '' }}>Text</option>
-                                                            <option value="email" {{ $mapping->facebook_field_type === 'email' ? 'selected' : '' }}>Email</option>
-                                                            <option value="phone" {{ $mapping->facebook_field_type === 'phone' ? 'selected' : '' }}>Phone</option>
-                                                            <option value="select" {{ $mapping->facebook_field_type === 'select' ? 'selected' : '' }}>Select</option>
-                                                            <option value="textarea" {{ $mapping->facebook_field_type === 'textarea' ? 'selected' : '' }}>Textarea</option>
-                                                            <option value="date" {{ $mapping->facebook_field_type === 'date' ? 'selected' : '' }}>Date</option>
-                                                            <option value="number" {{ $mapping->facebook_field_type === 'number' ? 'selected' : '' }}>Number</option>
-                                                        </select>
-                                                    </div>
-                                                    
-                                                    <!-- Maps To Arrow -->
-                                                    <div class="lg:col-span-1 text-center">
-                                                        <i class="ki-filled ki-arrow-right text-blue-500 text-lg"></i>
-                                                    </div>
-                                                    
-                                                    <!-- System Field -->
-                                                    <div class="lg:col-span-4">
-                                                        <label class="form-label text-xs font-semibold text-gray-600 mb-1">Client System Field</label>
-                                                        <select name="mappings[{{ $index }}][system_field_name]" class="select select-sm system-field-select" required>
-                                                            <option value="">Select Client Field...</option>
-                                                            @foreach($systemVariables as $category => $variables)
-                                                                <optgroup label="{{ $category }}">
-                                                                    @foreach($variables as $varKey => $varDescription)
-                                                                        <option value="{{ $varKey }}" 
-                                                                                title="{{ $varDescription }}"
-                                                                                {{ $mapping->system_field_name === $varKey ? 'selected' : '' }}>
-                                                                            {{ $varKey }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </optgroup>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    
-                                                    <!-- Controls -->
-                                                    <div class="lg:col-span-2 flex items-center justify-end gap-2">
-                                                        <label class="checkbox-group">
-                                                            <input type="checkbox" 
-                                                                   name="mappings[{{ $index }}][is_required]" 
-                                                                   value="1" 
-                                                                   {{ $mapping->is_required ? 'checked' : '' }}
-                                                                   class="checkbox checkbox-sm">
-                                                            <span class="checkbox-label text-xs">Required</span>
-                                                        </label>
-                                                        <label class="checkbox-group">
-                                                            <input type="checkbox" 
-                                                                   name="mappings[{{ $index }}][is_active]" 
-                                                                   value="1" 
-                                                                   {{ $mapping->is_active ? 'checked' : '' }}
-                                                                   class="checkbox checkbox-sm">
-                                                            <span class="checkbox-label text-xs">Active</span>
-                                                        </label>
-                                                        <button type="button" class="btn btn-sm btn-icon btn-light remove-mapping" title="Remove Mapping">
-                                                            <i class="ki-filled ki-trash text-red-500"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    
-                                    <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-                                        <a href="{{ route('facebook.lead-forms.show', $leadForm) }}" class="btn btn-secondary">Cancel</a>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="ki-filled ki-check"></i>
-                                            Save Mappings
-                                        </button>
-                                    </div>
-                                </form>
-                            @else
-                                <!-- Empty State -->
-                                <div class="text-center py-12">
-                                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i class="ki-filled ki-setting-2 text-3xl text-blue-500"></i>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">No Field Mappings Yet</h3>
-                                    <p class="text-gray-600 mb-4 max-w-md mx-auto">Start mapping Facebook lead form fields to your client management system to automatically capture and organize lead data.</p>
-                                    <button type="button" class="btn btn-primary" id="addFirstMapping">
-                                        <i class="ki-filled ki-plus"></i>
-                                        Add First Mapping
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sidebar - Client Fields Reference -->
-                <div class="lg:col-span-1">
-                    <div class="card sticky top-4">
-                        <div class="card-header">
-                            <h3 class="card-title flex items-center gap-2">
-                                <i class="ki-filled ki-profile-user text-green-600"></i>
-                                Available Client Fields
-                            </h3>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="space-y-4">
-                                @foreach($systemVariables as $category => $variables)
-                                    <div>
-                                        <h4 class="font-semibold text-sm text-gray-900 mb-3 flex items-center gap-2">
-                                            @if($category === 'Client Information')
-                                                <i class="ki-filled ki-profile-circle text-blue-500 text-sm"></i>
-                                            @else
-                                                <i class="ki-filled ki-note-2 text-orange-500 text-sm"></i>
-                                            @endif
-                                            {{ $category }}
-                                        </h4>
-                                        <div class="space-y-2">
-                                            @foreach($variables as $varKey => $varDescription)
-                                                <div class="client-field-item group cursor-pointer p-2 rounded-lg hover:bg-blue-50 transition-colors" 
-                                                     data-field="{{ $varKey }}" 
-                                                     data-description="{{ $varDescription }}"
-                                                     title="Click to use this field">
-                                                    <div class="flex items-start justify-between">
-                                                        <div class="min-w-0 flex-1">
-                                                            <code class="text-xs font-mono text-blue-600 block truncate">{{ $varKey }}</code>
-                                                            <span class="text-xs text-gray-500 mt-1 block">{{ Str::limit($varDescription, 40) }}</span>
-                                                        </div>
-                                                        <i class="ki-filled ki-plus text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs mt-1"></i>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            
-                            <!-- Quick Tips -->
-                            <div class="mt-6 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                                <h5 class="font-semibold text-sm text-yellow-800 mb-2">💡 Quick Tips</h5>
-                                <ul class="text-xs text-yellow-700 space-y-1">
-                                    <li>• Click on any field above to quickly use it</li>
-                                    <li>• Common Facebook fields: full_name, email, phone_number</li>
-                                    <li>• Mark important fields as required</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </x-slot>
-</x-team.layout.app>
 
 <!-- Add Mapping Modal -->
 <x-team.modal id="add_mapping_modal" title="Add New Field Mapping" size="max-w-2xl">
@@ -482,32 +301,6 @@
                 Add Mapping
             </button>
         </div>
-    </x-slot>
-</x-team.modal>
-
-<!-- Variables Reference Modal -->
-<x-team.modal id="variables_reference_modal" title="System Variables Reference" size="max-w-4xl">
-    <div class="mb-4">
-        <input type="text" id="variableSearch" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search variables...">
-    </div>
-    <div class="grid lg:grid-cols-2 gap-6">
-        @foreach($systemVariables as $category => $variables)
-            <div class="variable-category">
-                <h4 class="font-semibold text-gray-900 mb-3">{{ $category }}</h4>
-                <div class="space-y-2">
-                    @foreach($variables as $varKey => $varDescription)
-                        <div class="variable-item flex items-start gap-3 p-2 rounded hover:bg-gray-50 border border-transparent hover:border-gray-200">
-                            <code class="text-purple-600 text-sm font-mono min-w-0 flex-shrink-0">{{ $varKey }}</code>
-                            <span class="text-gray-600 text-sm">{{ $varDescription }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endforeach
-    </div>
-    
-    <x-slot name="footer">
-        <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors" data-kt-modal-dismiss="true">Close</button>
     </x-slot>
 </x-team.modal>
 
@@ -583,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <optgroup label="{{ $category }}">
                                 @foreach($variables as $varKey => $varDescription)
                                     <option value="{{ $varKey }}" title="{{ $varDescription }}"
-                                            ${data.system_field_name === '{{ $varKey }}' ? 'selected' : ''}>
+                                            \${data.system_field_name === '{{ $varKey }}' ? 'selected' : ''}>
                                         {{ $varKey }}
                                     </option>
                                 @endforeach
@@ -598,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="checkbox" 
                                name="mappings[${mappingIndex}][is_required]" 
                                value="1" 
-                               ${data.is_required === '1' ? 'checked' : ''}
+                               \${data.is_required === '1' ? 'checked' : ''}
                                class="mr-1">
                         Required
                     </label>
@@ -606,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="checkbox" 
                                name="mappings[${mappingIndex}][is_active]" 
                                value="1" 
-                               ${data.is_active !== '0' ? 'checked' : ''}
+                               \${data.is_active !== '0' ? 'checked' : ''}
                                class="mr-1">
                         Active
                     </label>
@@ -643,10 +436,10 @@ document.addEventListener('DOMContentLoaded', function() {
             addMappingRow(rowData);
             form.reset();
             
-            // Close modal using KT modal
+            // Close modal using data attribute
             const modal = document.getElementById('add_mapping_modal');
             if (modal) {
-                modal.classList.remove('show');
+                modal.style.display = 'none';
             }
             
             // Show success toast
@@ -706,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Show modal
                 if (modal) {
-                    modal.classList.add('show');
+                    modal.style.display = 'block';
                 }
             } else {
                 targetSelect.value = fieldName;
@@ -806,17 +599,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show preview modal
         const modal = document.getElementById('preview_modal');
         if (modal) {
-            modal.classList.add('show');
+            modal.style.display = 'block';
         }
-    });
-    
-    // Variable search functionality
-    document.getElementById('variableSearch')?.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        document.querySelectorAll('.variable-item').forEach(item => {
-            const text = item.textContent.toLowerCase();
-            item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
-        });
     });
 });
 </script>
