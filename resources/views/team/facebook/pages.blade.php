@@ -237,28 +237,34 @@
                                         </form>
                                     @endif
                                     
-                                    <div class="relative">
-                                        <button onclick="toggleDropdown({{ $page->id }})" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
+                                    <div class="kt-menu" data-kt-menu="true">
+                                        <button class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                                             </svg>
                                         </button>
-                                        <div id="dropdown-{{ $page->id }}" class="hidden absolute right-0 mt-1 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                        <div class="kt-menu-content w-36" data-kt-menu="true">
                                             <form action="{{ route('facebook.pages.sync-forms', $page) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg">
-                                                    Sync Forms
+                                                <button type="submit" class="kt-menu-item">
+                                                    <span class="kt-menu-link px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
+                                                        Sync Forms
+                                                    </span>
                                                 </button>
                                             </form>
                                             <form action="{{ route('facebook.pages.refresh', $page) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
-                                                    Refresh Data
+                                                <button type="submit" class="kt-menu-item">
+                                                    <span class="kt-menu-link px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
+                                                        Refresh Data
+                                                    </span>
                                                 </button>
                                             </form>
                                             @if($page->facebookLeadForms->count() > 0)
-                                                <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg">
-                                                    View Forms ({{ $page->facebookLeadForms->count() }})
+                                                <a href="{{ route('facebook.lead-forms') }}?page_id={{ $page->id }}" class="kt-menu-item">
+                                                    <span class="kt-menu-link px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                                        View Forms ({{ $page->facebookLeadForms->count() }})
+                                                    </span>
                                                 </a>
                                             @endif
                                         </div>
@@ -283,7 +289,14 @@
         <script>
             function copyToClipboard(text) {
                 navigator.clipboard.writeText(text).then(function() {
-                    showToast('Copied to clipboard!', 'success');
+                    KTToast.show({
+                        message: "Copied to clipboard!",
+                        icon: '<i class="ki-filled ki-check text-success text-xl"></i>',
+                        progress: true,
+                        pauseOnHover: true,
+                        variant: "success",
+                        duration: 3000
+                    });
                 }).catch(function(err) {
                     console.error('Could not copy text: ', err);
                     // Fallback for older browsers
@@ -293,55 +306,17 @@
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    showToast('Copied to clipboard!', 'success');
+                    
+                    KTToast.show({
+                        message: "Copied to clipboard!",
+                        icon: '<i class="ki-filled ki-check text-success text-xl"></i>',
+                        progress: true,
+                        pauseOnHover: true,
+                        variant: "success",
+                        duration: 3000
+                    });
                 });
             }
-
-            function toggleDropdown(pageId) {
-                const dropdown = document.getElementById(`dropdown-${pageId}`);
-                const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
-                
-                // Close all other dropdowns
-                allDropdowns.forEach(d => {
-                    if (d.id !== `dropdown-${pageId}`) {
-                        d.classList.add('hidden');
-                    }
-                });
-                
-                // Toggle current dropdown
-                dropdown.classList.toggle('hidden');
-            }
-
-            function showToast(message, type = 'success') {
-                const toast = document.createElement('div');
-                const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
-                toast.className = `fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-transform duration-300 translate-x-full`;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                
-                // Animate in
-                setTimeout(() => {
-                    toast.classList.remove('translate-x-full');
-                }, 100);
-                
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    toast.classList.add('translate-x-full');
-                    setTimeout(() => {
-                        if (document.body.contains(toast)) {
-                            document.body.removeChild(toast);
-                        }
-                    }, 300);
-                }, 3000);
-            }
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('[onclick^="toggleDropdown"]') && !event.target.closest('[id^="dropdown-"]')) {
-                    const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
-                    allDropdowns.forEach(d => d.classList.add('hidden'));
-                }
-            });
         </script>
     </x-slot>
 </x-team.layout.app>
