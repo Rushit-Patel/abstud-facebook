@@ -16,10 +16,10 @@ Route::middleware(['auth', 'web'])->prefix('facebook')->name('facebook.auth.')->
 });
 
 // Facebook Webhook Routes (public - no auth required)
-Route::prefix('facebook')->group(function () {
+Route::prefix('facebook-webhook')->group(function () {
     // Webhook verification and processing
-    Route::get('webhook', [FacebookWebhookController::class, 'verify'])->name('facebook.webhook.verify');
-    Route::post('webhook', [FacebookWebhookController::class, 'handle'])->name('facebook.webhook.handle');
+    Route::get('/', [FacebookWebhookController::class, 'verify'])->name('facebook.webhook.verify');
+    Route::post('/', [FacebookWebhookController::class, 'handle'])->name('facebook.webhook.handle');
 });
 
 // Public Legal Pages (no auth required)
