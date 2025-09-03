@@ -16,17 +16,12 @@ Route::middleware(['auth', 'web'])->prefix('facebook')->name('facebook.auth.')->
 });
 
 // Facebook Webhook Routes (public - no auth required)
-Route::prefix('facebook')->group(function () {
-    // Webhook verification and processing
-    Route::get('webhook', [FacebookWebhookController::class, 'verify'])->name('facebook.webhook.verify');
-    Route::post('webhook', [FacebookWebhookController::class, 'handle'])->name('facebook.webhook.handle');
-});
+Route::get('facebook-webhook', [FacebookWebhookController::class, 'verify'])->name('facebook.webhook.verify');
+Route::post('facebook-webhook', [FacebookWebhookController::class, 'handle'])->name('facebook.webhook.handle');
 
 // Public Legal Pages (no auth required)
-Route::prefix('facebook')->name('facebook.')->group(function () {
-    Route::get('privacy-policy', [FacebookIntegrationController::class, 'privacyPolicy'])->name('privacy-policy');
-    Route::get('terms-of-service', [FacebookIntegrationController::class, 'termsOfService'])->name('terms-of-service');
-});
+Route::get('privacy-policy', [FacebookIntegrationController::class, 'privacyPolicy'])->name('privacy-policy');
+Route::get('terms-of-service', [FacebookIntegrationController::class, 'termsOfService'])->name('terms-of-service');
 
 // Protected Facebook Integration Web Routes
 Route::middleware(['auth', 'web'])->prefix('team/facebook-integration')->name('facebook.')->group(function () {

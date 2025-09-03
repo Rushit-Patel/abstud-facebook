@@ -212,28 +212,49 @@ This project is proprietary software. All rights reserved.
 
 For technical support or questions, please contact the development team.
 
+pages_manage_metadata – App Functionality Description
 
-pages_manage_metadata:
+1. User Authentication
+     -> The user first logs into our CRM system using their system credentials.
+     -> On the dashboard, a new feature “Connect with Facebook” is available.
+     ->  When clicked, the user is redirected to Facebook Login to authorize our app.
 
-1. User Login to our system with their system username & password.
-2. Go to Dashboard Menu.
-3. User then Click the button "Connect with Facebook" to import Facebook Account.
-3. Our system get the user information, Page List & Access Token.
-4. Then user can subscribe their pages to Webhook for facebook ads Leads.
-5. There is two main option for Subscribed Page Sync Forms, Refresh Data. 
-6. Refresh Data will sync all the required data for page like banner , facebook category & many more.
-7. Sync Forms will sync all the page related lead forms to CRM.
-8. when all forms are synced than view lead forms options got open in that you can see listing of currenty active lead forms . 
-9. You can view leads for specific lead form where there is sync leads option is available.
-10. After syncing leads new leads will add to the listing & triggers for new leads fire triggers are dynamic user can send email , whatsapp & that leads is going to assign to user that is specified where they get new notification that new lead has  been assigned to you where they can work on it.
-11. for this functionality of triggers & instant response to user I need live webhook functionality so I can make this syncing process fully automated where user don't need to sync everytime they want to process like this. 
+2. Facebook Connection
+    -> Once successfully connected, our system retrieves:
+             User information
+             Page list
+             Access token
+    -> The connected Facebook details and lead statistics are then visible on the CRM dashboard.
 
+3. Page Subscription
+    -> The user selects a Facebook Page from the retrieved list.
+    -> By subscribing the page, our system connects to Facebook Webhooks for real-time lead retrieval.
 
-Test Credentials:
+4. Page Actions
+    -> Two primary options are available for each subscribed page:
+           1. Refresh Data – syncs page-related information (e.g., banner, category, metadata).
+           2. Sync Forms – imports all lead forms associated with the selected page into the CRM.
+    -> Once synced, the lead forms become available in the CRM with full details.
 
-URL: https://demo.teqcoder.com/ 
+5. Lead Management
+    -> Using the Facebook Lead Ads Testing Tool, a test lead can be generated.
+    -> Leads can then be synced into the CRM with the “Sync Leads” option.
+    -> Once synced, new leads appear in the system, and several triggers are executed automatically:
+            1. Lead count is updated on the dashboard sidebar.
+            2. Assigned users receive real-time notifications.
+            3. Automated emails are sent to leads (e.g., confirmation email).
+            4. Leads can also trigger WhatsApp messages and task assignments based on workflow rules.
+
+6. Automation & Webhooks
+   -> To provide instant response and avoid manual syncing, live Webhook functionality is required.
+   -> This ensures that whenever a new lead is submitted on Facebook, it is automatically added to the CRM, and all associated triggers (notifications, emails, WhatsApp, assignments) are executed instantly.
+
+Test Credentials
+
+CRM URL: https://demo.teqcoder.com/
 Username: test_user
 Password: test12345
 
-Developer Facebook Account: nishant.abstud@gmail.com
-Password : HCQCr_9ABtdK!jw
+Facebook Account
+email : nishant.abstud@gmail.com
+Password: HCQCr_9ABtdK!jw
