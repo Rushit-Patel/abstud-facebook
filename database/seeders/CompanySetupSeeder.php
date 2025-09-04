@@ -36,7 +36,6 @@ class CompanySetupSeeder extends Seeder
         $roles = [
             'Super Admin',
             'Admin',
-            'Frontdesk Executive',
         ];
 
         // Branches Data
@@ -83,28 +82,6 @@ class CompanySetupSeeder extends Seeder
                 'branch_code' => 'ABHO',
                 'role' => 'Admin'
             ],
-            [
-                'name' => 'Frontdesk Executive Ahmedabad',
-                'email' => 'frontdesk.ahd@abstud.io',
-                'username' => 'frontdesk_ahd',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '7574033368',
-                'is_active' => true,
-                'branch_code' => 'ABHO',
-                'role' => 'Frontdesk Executive'
-            ],
-            [
-                'name' => 'Visa Advisor Ahmedabad',
-                'email' => 'visaadvisor.ahd@abstud.io',
-                'username' => 'visaadvisor_ahd',
-                'password' => Hash::make('password'),
-                'base_password' => base64_encode('password'),
-                'phone' => '9099589276',
-                'is_active' => true,
-                'branch_code' => 'ABHO',
-                'role' => 'Visa Advisor'
-            ]
         ];
 
         // Create or update company settings

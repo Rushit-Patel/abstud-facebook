@@ -31,7 +31,7 @@
     'showUserMenu' => true
 ])
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
+<body class="antialiased flex h-full text-base text-foreground bg-background [--header-height-default:95px] data-kt-[sticky-header=on]:[--header-height:60px] [--header-height:var(--header-height-default)] [--header-height-mobile:70px]">
     <script>
         const defaultThemeMode = 'light';
         let themeMode;
@@ -55,21 +55,24 @@
             document.documentElement.classList.add(themeMode);
         }
     </script>
-    <div class="flex grow">
-        <x-team.navigation.sidebar :appData="$appData" />
-        <div class="kt-wrapper flex grow flex-col">
-            <x-team.layout.header
-                :title="$title"
-                :appData="$appData"
-                :breadcrumbs="$breadcrumbs"
-                :showNotifications="$showNotifications"
-                :showChat="$showChat"
-                :showApps="$showApps"
-                :showUserMenu="$showUserMenu" />
-            <main class="grow pt-5" id="content" role="content" style="background: #f4f7fb;">
+    <div class="flex grow flex-col in-data-kt-[sticky-header=on]:pt-(--header-height-default)">
+        {{-- <x-team.navigation.sidebar :appData="$appData" /> --}}
+    
+        <x-team.layout.header
+            :title="$title"
+            :appData="$appData"
+            :breadcrumbs="$breadcrumbs"
+            :showNotifications="$showNotifications"
+            :showChat="$showChat"
+            :showApps="$showApps"
+            :showUserMenu="$showUserMenu" />
+        <main class="grow" id="content" role="content">
+            <div class="kt-container-fixed" id="contentContainer">
+            </div>
+            <div class="kt-container-fixed">
                 {{ $content }}
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
     <!-- jQuery Full Version -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>

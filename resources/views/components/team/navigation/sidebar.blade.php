@@ -57,91 +57,17 @@
                     </x-team.navigation.sidebar-menu-item>
                 @endhaspermission
 
-                @haspermission('invoice:*')
-                    <x-team.navigation.sidebar-menu-item
-                        icon="ki-solid ki-dollar"
-                        label="Invoice"
-                        route="team.invoice.pending"
-                        {{-- :badge="$appData['pendingCounts']['followUps'] > 0 ? $appData['pendingCounts']['followUps'] : null" --}}
-                        tooltip="Follow-ups pending as of today or earlier."
-                        :hasSubmenu="false">
-                    </x-team.navigation.sidebar-menu-item>
-                @endhaspermission
-
-                <x-team.navigation.sidebar-heading label="Coaching Management" />
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-abstract-37"
-                    label="Demo"
-                    route="team.demo.pending"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-book-open"
-                    label="Coachings"
-                    route="team.coaching.running"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-user-tick"
-                    label="Attendance"
-                    route="team.attendance.index"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-feather"
-                    label="Mock Test"
-                    route="team.mock-test.index"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-calendar-tick"
-                    label="Exam Date Booking"
-                    route="team.exam-booking.index"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-classmates"
-                    label="Coaching Material"
-                    route="team.coaching-material.index"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-                <x-team.navigation.sidebar-heading label="Application"/>
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-classmates"
-                    label="Application"
-                    route="team.application.pending"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
-
-
-                <x-team.navigation.sidebar-heading label="Visa Filing" />
-
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-bank"
-                    label="Student Visa"
-                    route="team.student-visa.index"
-                    :hasSubmenu="false">
-                </x-team.navigation.sidebar-menu-item>
 
                 <x-team.navigation.sidebar-heading label="Automation" />
 
-                {{-- @haspermission('automation:*') --}}
+                @haspermission('automation:*')
                     <x-team.navigation.sidebar-menu-item
                         icon="ki-filled ki-rocket"
                         label="Automation"
                         route="team.automation.index"
                         :hasSubmenu="false">
                     </x-team.navigation.sidebar-menu-item>
-                {{-- @endhaspermission --}}
+                @endhaspermission
 
                 {{-- Settings Section --}}
                 @haspermission('master-module:*')
@@ -155,68 +81,6 @@
                     </x-team.navigation.sidebar-menu-item>
 
                 @endhaspermission
-
-            {{--
-                <x-team.navigation.sidebar-menu-item
-                    icon="ki-filled ki-profile-circle"
-                    label="Public Profile"
-                    :hasSubmenu="true"
-                    :isExpanded="true">
-
-                <x-team.navigation.sidebar-menu-item
-                    label="Profiles"
-                    :hasSubmenu="true"
-                    :isSubmenuItem="true">
-
-                    <x-team.navigation.sidebar-menu-item
-                        label="Creator"
-                        route="team.profile.creator"
-                        :isSubmenuItem="true" />
-
-                    <x-team.navigation.sidebar-menu-item
-                        label="Company"
-                        route="team.profile.company"
-                        :isSubmenuItem="true" />
-
-                    <x-team.navigation.sidebar-menu-item
-                        label="NFT"
-                        route="team.profile.nft"
-                        :isSubmenuItem="true" />
-
-                    <x-team.navigation.sidebar-menu-item
-                        label="Blogger"
-                        route="team.profile.blogger"
-                        :isSubmenuItem="true" />
-
-                    <x-team.navigation.sidebar-menu-item
-                        label="CRM"
-                        route="team.profile.crm"
-                        :isSubmenuItem="true" />
-
-                        <x-team.navigation.sidebar-show-more showText="Show 4 more">
-                            <x-team.navigation.sidebar-menu-item
-                                label="Gamer"
-                                route="team.profile.gamer"
-                                :isSubmenuItem="true" />
-
-                            <x-team.navigation.sidebar-menu-item
-                                label="Feeds"
-                                route="team.profile.feeds"
-                                :isSubmenuItem="true" />
-
-                            <x-team.navigation.sidebar-menu-item
-                                label="Plain"
-                                route="team.profile.plain"
-                                :isSubmenuItem="true" />
-
-                            <x-team.navigation.sidebar-menu-item
-                                label="Modal"
-                                route="team.profile.modal"
-                                :isSubmenuItem="true" />
-                        </x-team.navigation.sidebar-show-more>
-                    </x-team.navigation.sidebar-menu-item>
-                </x-team.navigation.sidebar-menu-item> --}}
-
                 {{ $slot }}
             </div>
         </div>

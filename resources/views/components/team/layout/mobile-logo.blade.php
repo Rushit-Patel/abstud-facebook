@@ -5,14 +5,9 @@
     $logoUrl = $appData['companyLogo'] ?? asset('images/default-logo.png');
 @endphp
 
-<!-- Mobile Logo -->
-<div class="flex gap-2.5 lg:hidden items-center -ms-1">
-     <a class="shrink-0" href="{{ route('team.dashboard') }}">
-          <img class="max-h-[25px] w-full" src="{{ $logoUrl }}" alt="{{ $appData['companyName'] ?? 'AbstudERP' }}" />
-     </a>
-     <div class="flex items-center">
-          <button class="kt-btn kt-btn-icon kt-btn-ghost" data-kt-drawer-toggle="#sidebar">
-               <i class="ki-filled ki-menu"></i>
-          </button>
-     </div>
-</div>
+<a class="dark:hidden" href="{{ route('team.dashboard') }}">
+     <img class="default-logo h-16" src="{{ $appData['companyLogo'] }}" alt="{{ $appData['companyName'] ?? 'Company Logo' }}" />
+</a>
+<a class="hidden dark:block" href="{{ route('team.dashboard') }}">
+     <img class="default-logo h-16" src="{{ $appData['companyLogo'] }}" alt="{{ $appData['companyName'] ?? 'Company Logo' }}" />
+</a>

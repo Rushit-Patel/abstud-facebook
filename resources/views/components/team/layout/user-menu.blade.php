@@ -16,16 +16,14 @@ $userData = array_merge([
 
 <!-- User -->
 <div class="shrink-0" data-kt-dropdown="true" data-kt-dropdown-offset="10px, 10px" data-kt-dropdown-offset-rtl="-20px, 10px" data-kt-dropdown-placement="bottom-end" data-kt-dropdown-placement-rtl="bottom-start" data-kt-dropdown-trigger="click">
-    <div class="cursor-pointer shrink-0" data-kt-dropdown-toggle="true">
+    <div class="cursor-pointer size-[34px] rounded-full inline-flex items-center justify-center relative text-lg font-medium border border-input bg-accent/60 text-foreground" data-kt-dropdown-toggle="true">
         @if($userData['avatar'])
             <img alt="" class="size-9 rounded-full border-2 border-green-500 shrink-0"
                 src="{{ $userData['avatar'] }}" />
-        @else
-            <div class="size-9 rounded-full border-2 border-green-500 shrink-0 bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-                {{ $userData['initials'] }}
-            </div>
+        @else  
+          {{ $userData['initials'] }}
         @endif
-    </div>
+     </div>
      <div class="kt-dropdown-menu w-[250px]" data-kt-dropdown-menu="true">
          <div class="flex items-center justify-between px-2.5 py-1.5 gap-1.5">
               <div class="flex items-center gap-2">

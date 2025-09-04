@@ -84,13 +84,3 @@ Route::prefix('team')->name('team.')->middleware('company.setup')->group(functio
 
 // Facebook Integration Routes
 require __DIR__.'/facebook_web.php';
-
-// Client Routes
-Route::prefix('client')->name('client.')->middleware('company.setup')->group(function () {
-    require __DIR__.'/Client/guest.php';
-});
-
-// Partner Routes
-Route::prefix('partner')->name('partner.')->middleware('company.setup')->group(function () {
-
-});

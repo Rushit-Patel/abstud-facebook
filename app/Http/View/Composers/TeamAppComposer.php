@@ -154,17 +154,17 @@ class TeamAppComposer
      */
     private function getUserInitials(string $name): string
     {
-        $words = explode(' ', $name);
-        $initials = '';
+        // $words = explode(' ', $name);
+        // $initials = '';
 
-        foreach ($words as $word) {
-            if (!empty($word)) {
-                $initials .= strtoupper(substr($word, 0, 1));
-                if (strlen($initials) >= 2) break;
-            }
-        }
+        // foreach ($words as $word) {
+        //     if (!empty($word)) {
+        //         $initials .= strtoupper(substr($word, 0, 1));
+        //         if (strlen($initials) >= 2) break;
+        //     }
+        // }
 
-        return $initials ?: 'U';
+        return $name[0] ?: 'U';
     }
 
     /**

@@ -7,7 +7,6 @@
 
 <x-team.layout.app title="Dashboard" :breadcrumbs="$breadcrumbs">
     <x-slot name="content">
-        <div class="kt-container-fixed">
             <div class="grid gap-2 lg:gap-2">
                 @haspermission('lead:*')
                     <x-team.dashboard.facebook.facebook-card />
@@ -92,74 +91,6 @@
 
                 {{-- Student Visa Dashboard End --}}
             </div>
-        </div>
-
-        <!-- Lead Filter Modal start -->
-        <x-team.drawer.drawer id="leadFilterModal" title="Filter Leads">
-            <x-slot name="body">
-                <form id="leadFilterForm">
-                    @csrf
-                    <div class="grid gap-4">
-                        <!-- Lead Status Filter -->
-                        @php
-                            $leadDateRangeOption = array(
-                                'yesterday' => 'Yesterday',
-                                'last_7_days' => 'Last 7 Days',
-                                'last_30_days' => 'Last 30 Days',
-                                'last_month' => 'Last Month',
-                                'this_year' => 'This Year',
-                                'last_year' => 'Last Year',
-                                'custom' => 'Custom Range',
-                            );
-                        @endphp
-                        <div class="flex flex-col gap-3 px-5">
-                            <x-team.forms.select name="lead_filter_date_range" id="lead_filter_date_range"
-                                label="Date Range" :options="$leadDateRangeOption" :selected="old('lead_filter_date')"
-                                placeholder="Select Date Range" searchable="true" />
-                        </div>
-
-                        <!-- Custom Date Range Picker -->
-                        <div class="flex flex-col gap-3 px-5" id="custom_date_range" style="display: none;">
-                            <x-team.forms.range-datepicker label="Lead Date" name="lead_filter_date"
-                                id="lead_filter_date" placeholder="Select lead date" dateFormat="Y-m-d"
-                                class="w-full range-flatpickr" />
-                        </div>
-                        @haspermission('lead:show-all')
-                        <div class="flex flex-col gap-3 px-5">
-                            <x-team.forms.select name="lead_filter_branch[]" id="lead_filter_branch" label="Branch"
-                                :options="$branches" :selected="old('lead_filter_branch')" placeholder="Select Branch"
-                                searchable="true" multiple="true" />
-                        </div>
-
-                        @endhaspermission
-
-                        @cannot('lead:show-all')
-                        <input type="hidden" name="lead_filter_branch[]" id="lead_filter_branch"
-                            value="{{ auth()->user()->branch_id }}">
-                        @endcannot
-
-                        @haspermission('lead:show-branch')
-                        <div class="flex flex-col gap-3 px-5">
-                            <x-team.forms.select name="lead_filter_users[]" id="lead_filter_users" label="User"
-                                :options="[]" :selected="old('lead_filter_users')" placeholder="Select user"
-                                searchable="true" multiple="true" />
-                        </div>
-                        @endhaspermission
-                    </div>
-                    <div class="kt-card-footer grid grid-cols-2 gap-2.5 mt-5">
-                        <button type="button" class="kt-btn kt-btn-outline" onclick="clearFilters()">
-                            Clear Filters
-                        </button>
-                        <button type="submit" class="kt-btn kt-btn-primary" id="applyFiltersBtn">
-                            <i class="ki-filled ki-check"></i>
-                            Apply Filters
-                        </button>
-                    </div>
-                </form>
-            </x-slot>
-        </x-team.drawer.drawer>
-        <!-- Lead Filter Modal End -->
-
     </x-slot>
 
     @push('scripts')

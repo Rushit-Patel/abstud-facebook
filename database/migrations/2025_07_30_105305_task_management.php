@@ -92,7 +92,6 @@ return new class extends Migration
             $table->index(['due_date', 'is_archived']);
             $table->index(['created_by', 'is_archived']);
             $table->index('is_archived');
-            $table->fullText(['title', 'description']); // For search functionality
         });
 
         Schema::create('task_assignments', function (Blueprint $table) {
