@@ -106,7 +106,7 @@
 
             <!-- Footer -->
             <div class="text-center mt-8">
-                <a href="{{ route('facebook.terms-of-service') }}" class="text-blue-600 hover:text-blue-800 mr-4">Terms of Service</a>
+                <a href="{{ route('terms-of-service') }}" class="text-blue-600 hover:text-blue-800 mr-4">Terms of Service</a>
                 <a href="{{ route('facebook.dashboard') }}" class="text-gray-600 hover:text-gray-800">Back to Dashboard</a>
             </div>
         </div>

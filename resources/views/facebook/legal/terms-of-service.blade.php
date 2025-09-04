@@ -154,7 +154,7 @@
 
             <!-- Footer -->
             <div class="text-center mt-8">
-                <a href="{{ route('facebook.privacy-policy') }}" class="text-blue-600 hover:text-blue-800 mr-4">Privacy Policy</a>
+                <a href="{{ route('privacy-policy') }}" class="text-blue-600 hover:text-blue-800 mr-4">Privacy Policy</a>
                 <a href="{{ route('facebook.dashboard') }}" class="text-gray-600 hover:text-gray-800">Back to Dashboard</a>
             </div>
         </div>
